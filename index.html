@@ -13,61 +13,90 @@
     <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
 
     <style>
-
       html{scroll-behavior: smooth;}
+      
       /* Typewriter base */
       .typewriter {
         display: inline-block;
         white-space: nowrap;
         overflow: hidden;
-        border-right: 2px solid rgba(0,0,0,0.75);
+        border-right: 2px solid rgba(139, 92, 246, 0.75);
       }
 
-      /* Subtle paper texture using CSS */
-      .paper-bg {
-        background-image: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(0,0,0,0.01) 100%), radial-gradient(circle at 10% 20%, rgba(0,0,0,0.01), transparent 10%), linear-gradient(90deg, rgba(0,0,0,0.01), transparent 50%);
+      /* Vibrant gradient background */
+      .hero-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      }
+      
+      .warm-gradient {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
       }
 
       /* Thin tasteful container max width */
       .content-max { max-width: 1100px; }
 
       /* Simple focus style for accessibility */
-      .focus-ring:focus { outline: 3px solid rgba(79, 70, 229, 0.12); outline-offset: 2px; }
+      .focus-ring:focus { outline: 3px solid rgba(139, 92, 246, 0.4); outline-offset: 2px; }
 
       /* Minimal scrollbar styling for desktop */
       ::-webkit-scrollbar { height: 10px; width: 10px; }
-      ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 9999px; }
+      ::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.3); border-radius: 9999px; }
 
       /* Readable serif for headings */
       .serif { font-family: ui-serif, Georgia, 'Times New Roman', serif; }
+      
+      /* Animated gradient text */
+      .gradient-text {
+        background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #667eea);
+        background-size: 300% 100%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradientShift 6s ease infinite;
+      }
+      
+      @keyframes gradientShift {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+      }
+      
+      /* Floating animation */
+      @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+      }
+      
+      .float-animation {
+        animation: float 6s ease-in-out infinite;
+      }
     </style>
   </head>
-  <body class="bg-white text-slate-800 antialiased leading-relaxed">
+  <body class="bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 text-slate-800 antialiased leading-relaxed">
 
     <!-- NAV -->
-    <header class="sticky top-0 z-30 backdrop-blur-sm bg-white/60 border-b border-slate-200">
+    <header class="sticky top-0 z-30 backdrop-blur-md bg-white/70 border-b border-purple-200 shadow-sm">
       <div class="mx-auto content-max px-6 py-4 flex items-center justify-between">
-        <a href="#hero" class="flex items-center gap-3 text-slate-900">
+        <a href="#hero" class="flex items-center gap-3 text-purple-900">
           <svg width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden>
             <rect x="3" y="4" width="14" height="16" rx="1.5" stroke="currentColor" stroke-width="1.2"></rect>
             <path d="M7 8h8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"></path>
             <path d="M7 12h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"></path>
           </svg>
           <div class="text-sm">
-            <div class="font-semibold">Booklings CSN</div>
-            <div class="text-xs text-slate-500">Reading • Analysis • Discussion</div>
+            <div class="font-bold gradient-text">Booklings CSN</div>
+            <div class="text-xs text-purple-600">Reading • Analysis • Discussion</div>
           </div>
         </a>
 
-        <nav class="hidden md:flex items-center gap-6 text-sm text-slate-600">
-          <a href="#philosophy" class="hover:text-slate-900">Philosophy</a>
-          <a href="#featured" class="hover:text-slate-900">Featured</a>
-          <a href="#archives" class="hover:text-slate-900">Archives</a>
-          <a href="#reviews" class="hover:text-slate-900">Reviews</a>
-          <a href="#join" class="px-3 py-2 rounded-md border border-slate-200 hover:bg-slate-50">Join</a>
+        <nav class="hidden md:flex items-center gap-6 text-sm text-slate-700 font-medium">
+          <a href="#philosophy" class="hover:text-purple-600 transition-colors">Philosophy</a>
+          <a href="#featured" class="hover:text-purple-600 transition-colors">Featured</a>
+          <a href="#archives" class="hover:text-purple-600 transition-colors">Archives</a>
+          <a href="#reviews" class="hover:text-purple-600 transition-colors">Reviews</a>
+          <a href="#join" class="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-lg transition-all">Join</a>
         </nav>
 
-        <button id="mobileMenuBtn" class="md:hidden focus-ring p-2 rounded-md">
+        <button id="mobileMenuBtn" class="md:hidden focus-ring p-2 rounded-md text-purple-600">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path d="M4 6h16M4 12h16M4 18h16" stroke-width="1.6" stroke-linecap="round"></path>
           </svg>
@@ -75,96 +104,115 @@
       </div>
 
       <!-- Mobile menu -->
-      <div id="mobileMenu" class="md:hidden hidden border-t border-slate-100">
+      <div id="mobileMenu" class="md:hidden hidden border-t border-purple-100 bg-white/90 backdrop-blur-sm">
         <div class="px-6 py-4 flex flex-col gap-3 text-sm">
-          <a href="#philosophy" class="py-2">Philosophy</a>
-          <a href="#featured" class="py-2">Featured</a>
-          <a href="#archives" class="py-2">Archives</a>
-          <a href="#reviews" class="py-2">Reviews</a>
-          <a href="#join" class="py-2 font-medium border rounded-md px-3 py-2">Join</a>
+          <a href="#philosophy" class="py-2 hover:text-purple-600">Philosophy</a>
+          <a href="#featured" class="py-2 hover:text-purple-600">Featured</a>
+          <a href="#archives" class="py-2 hover:text-purple-600">Archives</a>
+          <a href="#reviews" class="py-2 hover:text-purple-600">Reviews</a>
+          <a href="#join" class="py-2 font-medium bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg px-4 py-3 text-center">Join</a>
         </div>
       </div>
     </header>
 
     <!-- HERO -->
-    <main id="hero" class="paper-bg">
-      <section class="content-max mx-auto px-6 pt-12 pb-10 lg:pt-20 lg:pb-24">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-          <div data-aos="fade-right" data-aos-duration="800" class="space-y-6">
-            <h1 class="serif text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight">Read. Think. Discuss.</h1>
-            <p class="text-slate-700 max-w-xl">Booklings CSN is a student-led collective devoted to close reading, critical discussion, and shared notes. We treat books like arguments — we interrogate them, annotate them, and debate their claims.</p>
+    <main id="hero">
+      <section class="hero-gradient relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+          <div class="absolute top-20 left-20 w-72 h-72 bg-white rounded-full blur-3xl"></div>
+          <div class="absolute bottom-20 right-20 w-96 h-96 bg-pink-300 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div class="content-max mx-auto px-6 pt-16 pb-20 lg:pt-24 lg:pb-32 relative z-10">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div data-aos="fade-right" data-aos-duration="800" class="space-y-6">
+              <h1 class="serif text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-tight text-white drop-shadow-lg">Read. Think. Discuss.</h1>
+              <p class="text-white/95 max-w-xl text-lg">Booklings CSN is a student-led collective devoted to close reading, critical discussion, and shared notes. We treat books like arguments — we interrogate them, annotate them, and debate their claims.</p>
 
-            <div class="flex gap-4">
-              <a href="#join" class="inline-block px-5 py-3 rounded-md bg-slate-900 text-white text-sm font-medium focus-ring">Join the Club</a>
-              <a href="#featured" class="inline-block px-5 py-3 rounded-md border border-slate-200 text-sm text-slate-700 focus-ring">Browse Sessions</a>
-            </div>
-
-            <div class="mt-6 text-sm text-slate-500 flex items-center gap-2">
-              <span>Current focus:</span>
-              <span id="typewriter" class="typewriter font-medium text-slate-700"></span>
-            </div>
-          </div>
-
-          <div data-aos="fade-left" data-aos-duration="800" class="relative">
-            <div class="aspect-[4/3] rounded-2xl overflow-hidden shadow-lg border border-slate-200 bg-gradient-to-br from-slate-100 via-slate-50 to-white relative">
-              <div class="absolute inset-0 flex items-center justify-center p-12">
-                <svg viewBox="0 0 200 200" class="w-full h-full opacity-90" xmlns="http://www.w3.org/2000/svg">
-                  <!-- Stack of books illustration -->
-                  <g>
-                    <!-- Book 1 (bottom) -->
-                    <rect x="40" y="120" width="120" height="20" rx="2" fill="#64748b" opacity="0.8"/>
-                    <rect x="40" y="120" width="120" height="4" rx="1" fill="#475569"/>
-                    <line x1="100" y1="120" x2="100" y2="140" stroke="#475569" stroke-width="1.5"/>
-                    
-                    <!-- Book 2 (middle) -->
-                    <rect x="50" y="95" width="100" height="22" rx="2" fill="#94a3b8" opacity="0.8"/>
-                    <rect x="50" y="95" width="100" height="4" rx="1" fill="#64748b"/>
-                    <line x1="100" y1="95" x2="100" y2="117" stroke="#64748b" stroke-width="1.5"/>
-                    
-                    <!-- Book 3 (top) -->
-                    <rect x="60" y="72" width="80" height="20" rx="2" fill="#cbd5e1" opacity="0.9"/>
-                    <rect x="60" y="72" width="80" height="3" rx="1" fill="#94a3b8"/>
-                    <line x1="100" y1="72" x2="100" y2="92" stroke="#94a3b8" stroke-width="1.5"/>
-                    
-                    <!-- Open book on top -->
-                    <path d="M 70 60 Q 100 50 130 60 L 130 70 Q 100 60 70 70 Z" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
-                    <line x1="100" y1="50" x2="100" y2="70" stroke="#cbd5e1" stroke-width="2"/>
-                    <path d="M 75 62 L 95 58" stroke="#94a3b8" stroke-width="0.8" opacity="0.5"/>
-                    <path d="M 75 66 L 90 63" stroke="#94a3b8" stroke-width="0.8" opacity="0.5"/>
-                    <path d="M 105 58 L 125 62" stroke="#94a3b8" stroke-width="0.8" opacity="0.5"/>
-                    <path d="M 110 63 L 125 66" stroke="#94a3b8" stroke-width="0.8" opacity="0.5"/>
-                  </g>
-                </svg>
+              <div class="flex gap-4">
+                <a href="#join" class="inline-block px-6 py-4 rounded-xl bg-white text-purple-700 text-sm font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-105">Join the Club</a>
+                <a href="#featured" class="inline-block px-6 py-4 rounded-xl border-2 border-white text-white text-sm font-bold hover:bg-white/10 transition-all">Browse Sessions</a>
               </div>
-              <div class="absolute bottom-6 left-0 right-0 text-center">
-                <div class="text-slate-600 font-semibold text-lg">Booklings CSN</div>
-                <div class="text-slate-500 text-sm mt-1">Student Reading Collective</div>
+
+              <div class="mt-8 text-sm text-white/90 flex items-center gap-2">
+                <span class="font-semibold">Current focus:</span>
+                <span id="typewriter" class="typewriter font-medium text-yellow-200"></span>
               </div>
             </div>
-            <div class="mt-4 text-xs text-slate-500">Editorial selection • rotating every month</div>
+
+            <div data-aos="fade-left" data-aos-duration="800" class="relative float-animation">
+              <div class="aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border-4 border-white/30 bg-gradient-to-br from-pink-200 via-purple-200 to-indigo-200 relative">
+                <div class="absolute inset-0 flex items-center justify-center p-12">
+                  <svg viewBox="0 0 200 200" class="w-full h-full opacity-90" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Stack of books illustration -->
+                    <g>
+                      <!-- Book 1 (bottom) -->
+                      <rect x="40" y="120" width="120" height="20" rx="2" fill="#8b5cf6" opacity="0.9"/>
+                      <rect x="40" y="120" width="120" height="4" rx="1" fill="#6d28d9"/>
+                      <line x1="100" y1="120" x2="100" y2="140" stroke="#6d28d9" stroke-width="1.5"/>
+                      
+                      <!-- Book 2 (middle) -->
+                      <rect x="50" y="95" width="100" height="22" rx="2" fill="#ec4899" opacity="0.9"/>
+                      <rect x="50" y="95" width="100" height="4" rx="1" fill="#db2777"/>
+                      <line x1="100" y1="95" x2="100" y2="117" stroke="#db2777" stroke-width="1.5"/>
+                      
+                      <!-- Book 3 (top) -->
+                      <rect x="60" y="72" width="80" height="20" rx="2" fill="#3b82f6" opacity="0.9"/>
+                      <rect x="60" y="72" width="80" height="3" rx="1" fill="#2563eb"/>
+                      <line x1="100" y1="72" x2="100" y2="92" stroke="#2563eb" stroke-width="1.5"/>
+                      
+                      <!-- Open book on top -->
+                      <path d="M 70 60 Q 100 50 130 60 L 130 70 Q 100 60 70 70 Z" fill="#fef3c7" stroke="#fbbf24" stroke-width="2"/>
+                      <line x1="100" y1="50" x2="100" y2="70" stroke="#fbbf24" stroke-width="2"/>
+                      <path d="M 75 62 L 95 58" stroke="#f59e0b" stroke-width="0.8" opacity="0.7"/>
+                      <path d="M 75 66 L 90 63" stroke="#f59e0b" stroke-width="0.8" opacity="0.7"/>
+                      <path d="M 105 58 L 125 62" stroke="#f59e0b" stroke-width="0.8" opacity="0.7"/>
+                      <path d="M 110 63 L 125 66" stroke="#f59e0b" stroke-width="0.8" opacity="0.7"/>
+                    </g>
+                  </svg>
+                </div>
+                <div class="absolute bottom-6 left-0 right-0 text-center">
+                  <div class="text-purple-900 font-bold text-xl">Booklings CSN</div>
+                  <div class="text-purple-700 text-sm mt-1 font-medium">Student Reading Collective</div>
+                </div>
+              </div>
+              <div class="mt-4 text-xs text-white/80 text-center">Editorial selection • rotating every month</div>
+            </div>
           </div>
         </div>
       </section>
 
       <!-- SECTION 2: PHILOSOPHY -->
-      <section id="philosophy" data-aos="fade-up" data-aos-duration="700" class="border-t border-slate-100">
-        <div class="content-max mx-auto px-6 py-16">
+      <section id="philosophy" data-aos="fade-up" data-aos-duration="700" class="bg-white">
+        <div class="content-max mx-auto px-6 py-20">
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
             <div class="lg:col-span-2">
-              <h2 class="serif text-3xl font-bold">Our Reading Philosophy</h2>
-              <p class="mt-4 text-slate-700 max-w-prose">We value close reading over casual consumption. Sessions focus on passages rather than plot summaries. Members bring annotations, opposing interpretations are encouraged, and every reading concludes with a short written takeaway shared in the club archive.</p>
+              <h2 class="serif text-4xl font-bold gradient-text">Our Reading Philosophy</h2>
+              <p class="mt-4 text-slate-700 max-w-prose text-lg">We value close reading over casual consumption. Sessions focus on passages rather than plot summaries. Members bring annotations, opposing interpretations are encouraged, and every reading concludes with a short written takeaway shared in the club archive.</p>
 
-              <ul class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-slate-700">
-                <li><strong>Curated selections</strong> — each month features a theme chosen by voted members.</li>
-                <li><strong>Notes-first</strong> — participants prepare margin notes to spark focused conversation.</li>
-                <li><strong>Cross-disciplinary</strong> — we mix fiction, essays, philosophy, and science writing.</li>
-                <li><strong>Open debate</strong> — ideas are critiqued respectfully and rigorously.</li>
+              <ul class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6 text-slate-700">
+                <li class="flex gap-3">
+                  <span class="text-2xl text-purple-600 font-bold">•</span>
+                  <div><strong class="text-purple-700">Curated selections</strong> — each month features a theme chosen by voted members.</div>
+                </li>
+                <li class="flex gap-3">
+                  <span class="text-2xl text-pink-600 font-bold">•</span>
+                  <div><strong class="text-pink-700">Notes-first</strong> — participants prepare margin notes to spark focused conversation.</div>
+                </li>
+                <li class="flex gap-3">
+                  <span class="text-2xl text-blue-600 font-bold">•</span>
+                  <div><strong class="text-blue-700">Cross-disciplinary</strong> — we mix fiction, essays, philosophy, and science writing.</div>
+                </li>
+                <li class="flex gap-3">
+                  <span class="text-2xl text-indigo-600 font-bold">•</span>
+                  <div><strong class="text-indigo-700">Open debate</strong> — ideas are critiqued respectfully and rigorously.</div>
+                </li>
               </ul>
             </div>
 
-            <aside class="bg-slate-50 rounded-xl p-6 border border-slate-100">
-              <h3 class="text-sm font-semibold text-slate-700">How sessions run</h3>
-              <ol class="mt-4 text-sm text-slate-600 list-decimal pl-5 space-y-2">
+            <aside class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-8 border-2 border-purple-200 shadow-lg">
+              <h3 class="text-lg font-bold text-purple-900">How sessions run</h3>
+              <ol class="mt-4 text-sm text-slate-700 list-decimal pl-5 space-y-3 font-medium">
                 <li>Pre-read + submit two annotations.</li>
                 <li>30–40 minute focused discussion on a passage.</li>
                 <li>Collective takeaway & notes published to archive.</li>
@@ -175,71 +223,71 @@
       </section>
 
       <!-- SECTION 3: FEATURED BOOKS -->
-      <section id="featured" data-aos="fade-up" data-aos-duration="700" class="border-t border-slate-100">
-        <div class="content-max mx-auto px-6 py-16">
+      <section id="featured" data-aos="fade-up" data-aos-duration="700" class="bg-gradient-to-br from-blue-50 to-purple-50">
+        <div class="content-max mx-auto px-6 py-20">
           <div class="flex items-baseline justify-between">
-            <h2 class="serif text-2xl font-bold">Featured — This Month</h2>
-            <div class="text-sm text-slate-500">Curated by club moderators</div>
+            <h2 class="serif text-4xl font-bold gradient-text">Featured — This Month</h2>
+            <div class="text-sm text-purple-600 font-medium">Curated by club moderators</div>
           </div>
 
-          <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            <article data-aos="zoom-in" data-aos-duration="600" class="border rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-              <div class="aspect-[3/4] bg-gradient-to-br from-amber-100 to-orange-200 flex items-center justify-center p-6 relative overflow-hidden">
-                <div class="absolute inset-0 opacity-10">
-                  <div class="absolute top-4 left-4 w-32 h-32 bg-amber-900 rounded-full blur-3xl"></div>
-                  <div class="absolute bottom-4 right-4 w-40 h-40 bg-orange-900 rounded-full blur-3xl"></div>
+          <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <article data-aos="zoom-in" data-aos-duration="600" class="border-2 border-orange-300 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all hover:scale-105 bg-white">
+              <div class="aspect-[3/4] bg-gradient-to-br from-amber-200 via-orange-300 to-red-400 flex items-center justify-center p-6 relative overflow-hidden">
+                <div class="absolute inset-0 opacity-20">
+                  <div class="absolute top-4 left-4 w-32 h-32 bg-yellow-400 rounded-full blur-3xl"></div>
+                  <div class="absolute bottom-4 right-4 w-40 h-40 bg-red-600 rounded-full blur-3xl"></div>
                 </div>
                 <div class="relative text-center p-4">
-                  <div class="text-5xl font-bold text-amber-900 mb-3 serif">1984</div>
-                  <div class="text-xs uppercase tracking-wider text-amber-800 font-semibold">George Orwell</div>
-                  <div class="mt-4 w-16 h-1 bg-amber-800 mx-auto"></div>
+                  <div class="text-6xl font-bold text-red-900 mb-3 serif">1984</div>
+                  <div class="text-xs uppercase tracking-wider text-red-800 font-bold">George Orwell</div>
+                  <div class="mt-4 w-20 h-1.5 bg-red-800 mx-auto rounded-full"></div>
                 </div>
               </div>
-              <div class="p-5">
-                <h3 class="font-semibold text-lg">1984</h3>
-                <div class="text-xs text-slate-500 mt-1">George Orwell</div>
-                <p class="mt-3 text-sm text-slate-600">A dystopian masterpiece exploring surveillance, truth, and autonomy. Essential reading for understanding power structures in modern society.</p>
-                <div class="mt-4 text-xs text-slate-500">Session date: Nov 27, 2025</div>
+              <div class="p-6">
+                <h3 class="font-bold text-xl text-orange-900">1984</h3>
+                <div class="text-xs text-orange-600 mt-1 font-semibold">George Orwell</div>
+                <p class="mt-3 text-sm text-slate-700">A dystopian masterpiece exploring surveillance, truth, and autonomy. Essential reading for understanding power structures in modern society.</p>
+                <div class="mt-4 text-xs text-orange-600 font-bold">Session date: Nov 27, 2025</div>
               </div>
             </article>
 
-            <article data-aos="zoom-in" data-aos-duration="700" class="border rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-              <div class="aspect-[3/4] bg-gradient-to-br from-indigo-100 to-purple-200 flex items-center justify-center p-6 relative overflow-hidden">
-                <div class="absolute inset-0 opacity-10">
-                  <div class="absolute top-4 right-4 w-32 h-32 bg-indigo-900 rounded-full blur-3xl"></div>
-                  <div class="absolute bottom-4 left-4 w-40 h-40 bg-purple-900 rounded-full blur-3xl"></div>
+            <article data-aos="zoom-in" data-aos-duration="700" class="border-2 border-indigo-300 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all hover:scale-105 bg-white">
+              <div class="aspect-[3/4] bg-gradient-to-br from-indigo-300 via-purple-400 to-pink-400 flex items-center justify-center p-6 relative overflow-hidden">
+                <div class="absolute inset-0 opacity-20">
+                  <div class="absolute top-4 right-4 w-32 h-32 bg-indigo-600 rounded-full blur-3xl"></div>
+                  <div class="absolute bottom-4 left-4 w-40 h-40 bg-purple-600 rounded-full blur-3xl"></div>
                 </div>
                 <div class="relative text-center p-4">
-                  <div class="text-4xl font-bold text-indigo-900 mb-3 serif leading-tight">The Stranger</div>
-                  <div class="text-xs uppercase tracking-wider text-indigo-800 font-semibold">Albert Camus</div>
-                  <div class="mt-4 w-16 h-1 bg-indigo-800 mx-auto"></div>
+                  <div class="text-5xl font-bold text-indigo-900 mb-3 serif leading-tight">The Stranger</div>
+                  <div class="text-xs uppercase tracking-wider text-indigo-800 font-bold">Albert Camus</div>
+                  <div class="mt-4 w-20 h-1.5 bg-indigo-800 mx-auto rounded-full"></div>
                 </div>
               </div>
-              <div class="p-5">
-                <h3 class="font-semibold text-lg">The Stranger</h3>
-                <div class="text-xs text-slate-500 mt-1">Albert Camus</div>
-                <p class="mt-3 text-sm text-slate-600">Camus' existential meditation on absurdism and alienation. Perfect for debating the nature of meaning and moral responsibility.</p>
-                <div class="mt-4 text-xs text-slate-500">Session date: Dec 4, 2025</div>
+              <div class="p-6">
+                <h3 class="font-bold text-xl text-indigo-900">The Stranger</h3>
+                <div class="text-xs text-indigo-600 mt-1 font-semibold">Albert Camus</div>
+                <p class="mt-3 text-sm text-slate-700">Camus' existential meditation on absurdism and alienation. Perfect for debating the nature of meaning and moral responsibility.</p>
+                <div class="mt-4 text-xs text-indigo-600 font-bold">Session date: Dec 4, 2025</div>
               </div>
             </article>
 
-            <article data-aos="zoom-in" data-aos-duration="800" class="border rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-              <div class="aspect-[3/4] bg-gradient-to-br from-emerald-100 to-teal-200 flex items-center justify-center p-6 relative overflow-hidden">
-                <div class="absolute inset-0 opacity-10">
-                  <div class="absolute top-4 left-4 w-32 h-32 bg-emerald-900 rounded-full blur-3xl"></div>
-                  <div class="absolute bottom-4 right-4 w-40 h-40 bg-teal-900 rounded-full blur-3xl"></div>
+            <article data-aos="zoom-in" data-aos-duration="800" class="border-2 border-emerald-300 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all hover:scale-105 bg-white">
+              <div class="aspect-[3/4] bg-gradient-to-br from-emerald-300 via-teal-400 to-cyan-400 flex items-center justify-center p-6 relative overflow-hidden">
+                <div class="absolute inset-0 opacity-20">
+                  <div class="absolute top-4 left-4 w-32 h-32 bg-emerald-600 rounded-full blur-3xl"></div>
+                  <div class="absolute bottom-4 right-4 w-40 h-40 bg-teal-600 rounded-full blur-3xl"></div>
                 </div>
                 <div class="relative text-center p-4">
-                  <div class="text-3xl font-bold text-emerald-900 mb-3 serif leading-tight">Sapiens</div>
-                  <div class="text-xs uppercase tracking-wider text-emerald-800 font-semibold mt-2">Yuval Noah Harari</div>
-                  <div class="mt-4 w-16 h-1 bg-emerald-800 mx-auto"></div>
+                  <div class="text-4xl font-bold text-emerald-900 mb-3 serif leading-tight">Sapiens</div>
+                  <div class="text-xs uppercase tracking-wider text-emerald-800 font-bold mt-2">Yuval Noah Harari</div>
+                  <div class="mt-4 w-20 h-1.5 bg-emerald-800 mx-auto rounded-full"></div>
                 </div>
               </div>
-              <div class="p-5">
-                <h3 class="font-semibold text-lg">Sapiens</h3>
-                <div class="text-xs text-slate-500 mt-1">Yuval Noah Harari</div>
-                <p class="mt-3 text-sm text-slate-600">A sweeping history of humankind that challenges our assumptions. Ideal for cross-disciplinary discussions on culture, science, and progress.</p>
-                <div class="mt-4 text-xs text-slate-500">Session date: Dec 11, 2025</div>
+              <div class="p-6">
+                <h3 class="font-bold text-xl text-emerald-900">Sapiens</h3>
+                <div class="text-xs text-emerald-600 mt-1 font-semibold">Yuval Noah Harari</div>
+                <p class="mt-3 text-sm text-slate-700">A sweeping history of humankind that challenges our assumptions. Ideal for cross-disciplinary discussions on culture, science, and progress.</p>
+                <div class="mt-4 text-xs text-emerald-600 font-bold">Session date: Dec 11, 2025</div>
               </div>
             </article>
           </div>
@@ -247,30 +295,30 @@
       </section>
 
       <!-- SECTION 4: WEEKLY DISCUSSION ARCHIVES -->
-      <section id="archives" data-aos="fade-up" data-aos-duration="700" class="border-t border-slate-100">
-        <div class="content-max mx-auto px-6 py-16">
-          <h2 class="serif text-2xl font-bold">Discussion Archives</h2>
-          <p class="mt-3 text-slate-600 max-w-prose">A searchable, chronological archive of past sessions, passage notes, and key takeaways.</p>
+      <section id="archives" data-aos="fade-up" data-aos-duration="700" class="bg-white">
+        <div class="content-max mx-auto px-6 py-20">
+          <h2 class="serif text-4xl font-bold gradient-text">Discussion Archives</h2>
+          <p class="mt-3 text-slate-700 max-w-prose text-lg">A searchable, chronological archive of past sessions, passage notes, and key takeaways.</p>
 
-          <div class="mt-8 space-y-4">
-            <article data-aos="fade-up" data-aos-duration="500" class="p-5 rounded-xl border border-slate-100 bg-white shadow-sm">
+          <div class="mt-10 space-y-6">
+            <article data-aos="fade-up" data-aos-duration="500" class="p-6 rounded-2xl border-2 border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50 shadow-lg hover:shadow-xl transition-shadow">
               <div class="flex justify-between items-start">
                 <div>
-                  <h3 class="font-semibold">Close reading: Chapter 3 (Poetic Form)</h3>
-                  <div class="text-xs text-slate-500 mt-1">Nov 10, 2025 • 14 attendees</div>
+                  <h3 class="font-bold text-lg text-purple-900">Close reading: Chapter 3 (Poetic Form)</h3>
+                  <div class="text-xs text-purple-600 mt-1 font-medium">Nov 10, 2025 • 14 attendees</div>
                 </div>
-                <a href="#" class="text-sm text-slate-600 underline">Download notes</a>
+                <a href="#" class="text-sm text-purple-700 font-bold underline hover:text-purple-900">Download notes</a>
               </div>
               <p class="mt-3 text-slate-700">Key takeaway: a short sentence capturing the decisive interpretive move from the discussion.</p>
             </article>
 
-            <article data-aos="fade-up" data-aos-duration="600" class="p-5 rounded-xl border border-slate-100 bg-white shadow-sm">
+            <article data-aos="fade-up" data-aos-duration="600" class="p-6 rounded-2xl border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 shadow-lg hover:shadow-xl transition-shadow">
               <div class="flex justify-between items-start">
                 <div>
-                  <h3 class="font-semibold">Essay cluster: Narrative and Ethics</h3>
-                  <div class="text-xs text-slate-500 mt-1">Oct 27, 2025 • 18 attendees</div>
+                  <h3 class="font-bold text-lg text-blue-900">Essay cluster: Narrative and Ethics</h3>
+                  <div class="text-xs text-blue-600 mt-1 font-medium">Oct 27, 2025 • 18 attendees</div>
                 </div>
-                <a href="#" class="text-sm text-slate-600 underline">Download notes</a>
+                <a href="#" class="text-sm text-blue-700 font-bold underline hover:text-blue-900">Download notes</a>
               </div>
               <p class="mt-3 text-slate-700">Key takeaway: participants disagreed about authorial intent and argued for plural readings.</p>
             </article>
@@ -278,98 +326,194 @@
         </div>
       </section>
 
-      <!-- SECTION 5: STUDENT INSIGHTS -->
-      <section id="insights" data-aos="fade-up" data-aos-duration="700" class="border-t border-slate-100">
-        <div class="content-max mx-auto px-6 py-16">
-          <h2 class="serif text-2xl font-bold">Student Insights</h2>
-          <p class="mt-3 text-slate-600 max-w-prose">Short, direct reflections from members on what they took away from recent readings.</p>
+      <!-- SECTION 5: READING STATS GAME -->
+      <section id="stats" data-aos="fade-up" data-aos-duration="700" class="bg-white">
+        <div class="content-max mx-auto px-6 py-20">
+          <h2 class="serif text-4xl font-bold gradient-text text-center">Test Your Reading Skills</h2>
+          <p class="mt-3 text-slate-700 max-w-2xl text-lg text-center mx-auto">Read a passage aloud and get instant feedback on your accuracy, confidence, and tone. Our AI analyzes your voice to help you become a better reader.</p>
 
-          <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <blockquote data-aos="fade-up" data-aos-duration="500" class="p-6 bg-slate-50 border-l-4 border-slate-200 rounded-lg">
-              <p class="text-slate-700">"Reading alongside others made me notice recurring motifs I would never have seen alone."</p>
-              <footer class="mt-3 text-xs text-slate-500">— Aisha, 3rd year, English</footer>
+          <div class="mt-12 max-w-3xl mx-auto">
+            <!-- Passage to Read -->
+            <div class="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-3xl p-8 shadow-xl mb-8">
+              <h3 class="text-xl font-bold text-purple-900 mb-4">Read this passage aloud:</h3>
+              <div id="passageText" class="text-lg text-slate-800 leading-relaxed font-serif italic bg-white/50 p-6 rounded-xl border border-purple-100">
+                "It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness."
+              </div>
+              <div class="text-sm text-slate-600 mt-3 text-right">— Charles Dickens, A Tale of Two Cities</div>
+            </div>
+
+            <!-- Recording Controls -->
+            <div class="bg-white border-2 border-purple-300 rounded-3xl p-8 shadow-xl mb-8">
+              <div class="flex flex-col items-center gap-6">
+                <button id="recordBtn" type="button" class="px-12 py-6 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xl font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">
+                  Start Recording
+                </button>
+                
+                <div id="recordingStatus" class="text-sm text-slate-600 font-medium h-6"></div>
+                
+                <div id="listeningIndicator" class="hidden">
+                  <div class="flex gap-2 items-end justify-center h-12">
+                    <div class="w-2 bg-purple-500 rounded-full animate-pulse" style="height: 20%; animation-delay: 0s;"></div>
+                    <div class="w-2 bg-pink-500 rounded-full animate-pulse" style="height: 40%; animation-delay: 0.1s;"></div>
+                    <div class="w-2 bg-purple-500 rounded-full animate-pulse" style="height: 60%; animation-delay: 0.2s;"></div>
+                    <div class="w-2 bg-pink-500 rounded-full animate-pulse" style="height: 80%; animation-delay: 0.3s;"></div>
+                    <div class="w-2 bg-purple-500 rounded-full animate-pulse" style="height: 100%; animation-delay: 0.4s;"></div>
+                    <div class="w-2 bg-pink-500 rounded-full animate-pulse" style="height: 80%; animation-delay: 0.5s;"></div>
+                    <div class="w-2 bg-purple-500 rounded-full animate-pulse" style="height: 60%; animation-delay: 0.6s;"></div>
+                    <div class="w-2 bg-pink-500 rounded-full animate-pulse" style="height: 40%; animation-delay: 0.7s;"></div>
+                    <div class="w-2 bg-purple-500 rounded-full animate-pulse" style="height: 20%; animation-delay: 0.8s;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Results -->
+            <div id="results" class="hidden">
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- Accuracy -->
+                <div class="bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-300 rounded-3xl p-6 shadow-xl">
+                  <h3 class="text-lg font-bold text-purple-900 mb-4">Accuracy</h3>
+                  <div class="relative w-full h-3 bg-purple-200 rounded-full overflow-hidden mb-3">
+                    <div id="accuracyBar" class="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-500 to-purple-700 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                  </div>
+                  <div class="text-4xl font-bold text-purple-900" id="accuracyScore">0%</div>
+                  <div class="text-xs text-purple-700 mt-2">Word precision & pronunciation</div>
+                </div>
+
+                <!-- Confidence -->
+                <div class="bg-gradient-to-br from-pink-50 to-pink-100 border-2 border-pink-300 rounded-3xl p-6 shadow-xl">
+                  <h3 class="text-lg font-bold text-pink-900 mb-4">Confidence</h3>
+                  <div class="relative w-full h-3 bg-pink-200 rounded-full overflow-hidden mb-3">
+                    <div id="confidenceBar" class="absolute top-0 left-0 h-full bg-gradient-to-r from-pink-500 to-pink-700 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                  </div>
+                  <div class="text-4xl font-bold text-pink-900" id="confidenceScore">0%</div>
+                  <div class="text-xs text-pink-700 mt-2">Voice clarity & steadiness</div>
+                </div>
+
+                <!-- Tone -->
+                <div class="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-300 rounded-3xl p-6 shadow-xl">
+                  <h3 class="text-lg font-bold text-blue-900 mb-4">Tone</h3>
+                  <div class="relative w-full h-3 bg-blue-200 rounded-full overflow-hidden mb-3">
+                    <div id="toneBar" class="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-blue-700 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                  </div>
+                  <div class="text-4xl font-bold text-blue-900" id="toneScore">0%</div>
+                  <div class="text-xs text-blue-700 mt-2">Expression & engagement</div>
+                </div>
+              </div>
+
+              <div class="bg-gradient-to-r from-purple-100 to-pink-100 border-2 border-purple-200 rounded-2xl p-6 shadow-lg text-center">
+                <div class="text-sm text-slate-600 font-medium mb-2">Overall Reading Score</div>
+                <div class="text-5xl font-bold gradient-text" id="overallScore">0%</div>
+                <div id="feedback" class="text-sm text-slate-700 mt-4"></div>
+              </div>
+
+              <div class="text-center mt-6">
+                <button id="tryAgainBtn" class="px-8 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105">
+                  Try Again
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 6: STUDENT INSIGHTS -->
+      <section id="insights" data-aos="fade-up" data-aos-duration="700" class="bg-gradient-to-br from-pink-50 to-purple-50">
+        <div class="content-max mx-auto px-6 py-20">
+          <h2 class="serif text-4xl font-bold gradient-text">Student Insights</h2>
+          <p class="mt-3 text-slate-700 max-w-prose text-lg">Short, direct reflections from members on what they took away from recent readings.</p>
+
+          <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-8">
+            <blockquote data-aos="fade-up" data-aos-duration="500" class="p-8 bg-white border-l-4 border-purple-500 rounded-2xl shadow-xl">
+              <p class="text-slate-800 text-lg italic">"Reading alongside others made me notice recurring motifs I would never have seen alone."</p>
+              <footer class="mt-4 text-sm text-purple-700 font-bold">— Aisha, 3rd year, English</footer>
             </blockquote>
 
-            <blockquote data-aos="fade-up" data-aos-duration="550" class="p-6 bg-slate-50 border-l-4 border-slate-200 rounded-lg">
-              <p class="text-slate-700">"The notes archive is the best study aid — concise, pointed, and authored by peers."</p>
-              <footer class="mt-3 text-xs text-slate-500">— Rohit, 2nd year, Economics</footer>
+            <blockquote data-aos="fade-up" data-aos-duration="550" class="p-8 bg-white border-l-4 border-pink-500 rounded-2xl shadow-xl">
+              <p class="text-slate-800 text-lg italic">"The notes archive is the best study aid — concise, pointed, and authored by peers."</p>
+              <footer class="mt-4 text-sm text-pink-700 font-bold">— Rohit, 2nd year, Economics</footer>
             </blockquote>
           </div>
         </div>
       </section>
 
-      <!-- SECTION 6: BOOK REVIEWS -->
-      <section id="reviews" data-aos="fade-up" data-aos-duration="700" class="border-t border-slate-100">
-        <div class="content-max mx-auto px-6 py-16">
-          <h2 class="serif text-2xl font-bold">Book Reviews</h2>
-          <p class="mt-3 text-slate-600 max-w-prose">Short reviews curated by members. Each review is editorial in tone and limited to 120 words.</p>
+      <!-- SECTION 7: BOOK REVIEWS -->
+      <section id="reviews" data-aos="fade-up" data-aos-duration="700" class="bg-white">
+        <div class="content-max mx-auto px-6 py-20">
+          <h2 class="serif text-4xl font-bold gradient-text">Book Reviews</h2>
+          <p class="mt-3 text-slate-700 max-w-prose text-lg">Short reviews curated by members. Each review is editorial in tone and limited to 120 words.</p>
 
-          <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <article data-aos="flip-left" data-aos-duration="600" class="p-6 border rounded-xl bg-white shadow-sm">
-              <h3 class="font-semibold">On Solitude</h3>
-              <div class="text-xs text-slate-500 mt-1">by Priya • 95 words</div>
-              <p class="mt-3 text-slate-700 text-sm">A concise reflection that connects the book's argument to everyday campus life and why the club recommended it.</p>
+          <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <article data-aos="flip-left" data-aos-duration="600" class="p-8 border-2 border-purple-300 rounded-3xl bg-gradient-to-br from-purple-50 to-white shadow-xl hover:shadow-2xl transition-all hover:scale-105">
+              <h3 class="font-bold text-xl text-purple-900">On Solitude</h3>
+              <div class="text-xs text-purple-600 mt-1 font-semibold">by Priya • 95 words</div>
+              <p class="mt-4 text-slate-700">A concise reflection that connects the book's argument to everyday campus life and why the club recommended it.</p>
             </article>
 
-            <article data-aos="flip-left" data-aos-duration="650" class="p-6 border rounded-xl bg-white shadow-sm">
-              <h3 class="font-semibold">Maps and Memory</h3>
-              <div class="text-xs text-slate-500 mt-1">by Sameer • 110 words</div>
-              <p class="mt-3 text-slate-700 text-sm">Overview of the book's thesis, the reviewer's main objection, and whether they'd recommend it for the next semester.</p>
+            <article data-aos="flip-left" data-aos-duration="650" class="p-8 border-2 border-pink-300 rounded-3xl bg-gradient-to-br from-pink-50 to-white shadow-xl hover:shadow-2xl transition-all hover:scale-105">
+              <h3 class="font-bold text-xl text-pink-900">Maps and Memory</h3>
+              <div class="text-xs text-pink-600 mt-1 font-semibold">by Sameer • 110 words</div>
+              <p class="mt-4 text-slate-700">Overview of the book's thesis, the reviewer's main objection, and whether they'd recommend it for the next semester.</p>
             </article>
           </div>
         </div>
       </section>
 
-      <!-- SECTION 7: JOIN THE CLUB -->
-      <section id="join" data-aos="fade-up" data-aos-duration="700" class="border-t border-slate-100">
-        <div class="content-max mx-auto px-6 py-16">
-          <h2 class="serif text-2xl font-bold">Apply to Join</h2>
-          <p class="mt-3 text-slate-600 max-w-prose">We prioritize engaged readers. Fill the short form — moderators will review and reply via email.</p>
+      <!-- SECTION 8: JOIN THE CLUB -->
+      <section id="join" data-aos="fade-up" data-aos-duration="700" class="warm-gradient relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+          <div class="absolute top-20 left-20 w-72 h-72 bg-white rounded-full blur-3xl"></div>
+          <div class="absolute bottom-20 right-20 w-96 h-96 bg-yellow-300 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div class="content-max mx-auto px-6 py-20 relative z-10">
+          <h2 class="serif text-4xl font-bold text-white">Apply to Join</h2>
+          <p class="mt-3 text-white/95 max-w-prose text-lg">We prioritize engaged readers. Fill the short form — moderators will review and reply via email.</p>
 
-          <form id="joinForm" class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4" onsubmit="handleForm(event)">
-            <input name="name" required class="focus-ring p-3 rounded-md border border-slate-200" placeholder="Full name" />
-            <input name="email" type="email" required class="focus-ring p-3 rounded-md border border-slate-200" placeholder="College email" />
-            <input name="department" class="focus-ring p-3 rounded-md border border-slate-200" placeholder="Department / Year" />
-            <input name="genres" class="focus-ring p-3 rounded-md border border-slate-200" placeholder="Preferred genres (comma separated)" />
-            <textarea name="why" required class="md:col-span-2 focus-ring p-3 rounded-md border border-slate-200" rows="4" placeholder="Why do you want to join? (brief)"></textarea>
+          <form id="joinForm" class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6" onsubmit="handleForm(event)">
+            <input name="name" required class="focus-ring p-4 rounded-xl border-2 border-white/30 bg-white/90 backdrop-blur-sm" placeholder="Full name" />
+            <input name="email" type="email" required class="focus-ring p-4 rounded-xl border-2 border-white/30 bg-white/90 backdrop-blur-sm" placeholder="College email" />
+            <input name="department" class="focus-ring p-4 rounded-xl border-2 border-white/30 bg-white/90 backdrop-blur-sm" placeholder="Department / Year" />
+            <input name="genres" class="focus-ring p-4 rounded-xl border-2 border-white/30 bg-white/90 backdrop-blur-sm" placeholder="Preferred genres (comma separated)" />
+            <textarea name="why" required class="md:col-span-2 focus-ring p-4 rounded-xl border-2 border-white/30 bg-white/90 backdrop-blur-sm" rows="4" placeholder="Why do you want to join? (brief)"></textarea>
 
             <div class="md:col-span-2 flex items-center gap-4">
-              <button type="submit" class="px-5 py-3 rounded-md bg-slate-900 text-white">Submit Application</button>
-              <div id="formMsg" class="text-sm text-slate-600"></div>
+              <button type="submit" class="px-8 py-4 rounded-xl bg-white text-purple-700 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-105">Submit Application</button>
+              <div id="formMsg" class="text-sm text-white font-medium"></div>
             </div>
           </form>
         </div>
       </section>
 
-      <!-- SECTION 8: FOOTER / RESOURCES -->
-      <footer class="border-t border-slate-100">
-        <div class="content-max mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- SECTION 9: FOOTER / RESOURCES -->
+      <footer class="bg-gradient-to-r from-slate-900 to-purple-900 text-white">
+        <div class="content-max mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-3 gap-10">
           <div>
-            <div class="font-semibold">Booklings CSN</div>
-            <div class="text-sm text-slate-600 mt-2">Reading collective at your college. We host weekly sessions, publish notes, and curate reading lists.</div>
+            <div class="font-bold text-xl gradient-text bg-gradient-to-r from-yellow-300 to-pink-300">Booklings CSN</div>
+            <div class="text-sm text-white/80 mt-3 leading-relaxed">Reading collective at your college. We host weekly sessions, publish notes, and curate reading lists.</div>
           </div>
 
           <div>
-            <div class="font-semibold text-sm">Resources</div>
-            <ul class="mt-3 text-sm text-slate-600 space-y-2">
-              <li><a href="#archives" class="underline">Session archives</a></li>
-              <li><a href="#featured" class="underline">Current reads</a></li>
-              <li><a href="#reviews" class="underline">Member reviews</a></li>
+            <div class="font-bold text-sm text-yellow-300">Resources</div>
+            <ul class="mt-4 text-sm text-white/80 space-y-2">
+              <li><a href="#archives" class="hover:text-yellow-300 transition-colors">Session archives</a></li>
+              <li><a href="#featured" class="hover:text-yellow-300 transition-colors">Current reads</a></li>
+              <li><a href="#reviews" class="hover:text-yellow-300 transition-colors">Member reviews</a></li>
             </ul>
           </div>
 
           <div>
-            <div class="font-semibold text-sm">Created By:</div>
-            <ul class="mt-3 text-sm text-slate-600 space-y-2">
-              <li><mark><b>Rizwan Syed</b></mark></li>
-              <li><mark><b>Tareque Syed</b></mark></li>
+            <div class="font-bold text-sm text-pink-300">Created By:</div>
+            <ul class="mt-4 text-sm space-y-2">
+              <li class="text-yellow-300 font-bold">Rizwan Syed</li>
+              <li class="text-yellow-300 font-bold">Tareque Syed</li>
             </ul>
           </div>
 
           <div>
-            <div class="font-semibold text-sm">Contact</div>
-            <div class="mt-3 text-sm text-slate-600">Email: <a href="mailto:booklings.official@gmail.com" class="underline">booklings.official@gmail.com</a></div>
-            <div class="text-sm text-slate-600 mt-2">© Booklings CSN • 2025</div>
+            <div class="font-bold text-sm text-purple-300">Contact</div>
+            <div class="mt-4 text-sm text-white/80">Email: <a href="mailto:booklings.official@gmail.com" class="text-yellow-300 hover:text-yellow-200 transition-colors">booklings.official@gmail.com</a></div>
+            <div class="text-sm text-white/60 mt-4">© Booklings CSN • 2025</div>
           </div>
         </div>
       </footer>
@@ -427,19 +571,118 @@
         const msg = document.getElementById('formMsg');
         if (!name || !email || !why) {
           msg.textContent = 'Please fill required fields.';
-          msg.classList.add('text-rose-600');
+          msg.classList.add('text-yellow-300');
           return;
         }
 
         // mailto fallback to send application to club inbox; moderators can replace address.
         const subject = encodeURIComponent('Booklings membership application — ' + name);
         const body = encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\nDepartment: ' + (f.department.value || '') + '\nGenres: ' + (f.genres.value || '') + '\n\nWhy:\n' + why);
-        window.location.href = 'mailto:booklings@example.edu?subject=' + subject + '&body=' + body;
+        window.location.href = 'mailto:booklings.official@gmail.com?subject=' + subject + '&body=' + body;
 
         msg.textContent = 'Opening email client to send your application...';
-        msg.classList.remove('text-rose-600');
-        msg.classList.add('text-slate-600');
+        msg.classList.remove('text-yellow-300');
+        msg.classList.add('text-white');
       }
     </script>
+<script>
+// READING TEST: SIMPLE FRONTEND RECORDER + RANDOM SCORES
+document.addEventListener("DOMContentLoaded", () => {
+  const recordBtn = document.getElementById("recordBtn");
+  const status = document.getElementById("recordingStatus");
+  const indicator = document.getElementById("listeningIndicator");
+  const results = document.getElementById("results");
+
+  const accuracyBar = document.getElementById("accuracyBar");
+  const confidenceBar = document.getElementById("confidenceBar");
+  const toneBar = document.getElementById("toneBar");
+
+  const accuracyScore = document.getElementById("accuracyScore");
+  const confidenceScore = document.getElementById("confidenceScore");
+  const toneScore = document.getElementById("toneScore");
+  const overallScore = document.getElementById("overallScore");
+  const feedback = document.getElementById("feedback");
+
+  const tryAgainBtn = document.getElementById("tryAgainBtn");
+
+  let isRecording = false;
+  let stream;
+  let mediaRecorder;
+  let chunks = [];
+
+  recordBtn.addEventListener("click", async () => {
+    if (!isRecording) {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      } catch (err) {
+        alert("Mic access denied or unavailable.");
+        return;
+      }
+
+      isRecording = true;
+      recordBtn.textContent = "Stop Recording";
+      status.textContent = "Listening...";
+      indicator.classList.remove("hidden");
+
+      mediaRecorder = new MediaRecorder(stream);
+      chunks = [];
+
+      mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
+
+      mediaRecorder.onstop = () => {
+        stream.getTracks().forEach(t => t.stop());
+        indicator.classList.add("hidden");
+        status.textContent = "";
+
+        // Fake AI scoring until backend is added
+        const acc = Math.floor(Math.random() * 31) + 70; 
+        const conf = Math.floor(Math.random() * 31) + 60;
+        const tn = Math.floor(Math.random() * 31) + 65;
+        const overall = Math.floor((acc + conf + tn) / 3);
+
+        results.classList.remove("hidden");
+
+        accuracyBar.style.width = acc + "%";
+        confidenceBar.style.width = conf + "%";
+        toneBar.style.width = tn + "%";
+
+        accuracyScore.textContent = acc + "%";
+        confidenceScore.textContent = conf + "%";
+        toneScore.textContent = tn + "%";
+        overallScore.textContent = overall + "%";
+
+        feedback.textContent =
+          overall > 85
+            ? "Excellent reading with strong clarity."
+            : overall > 70
+            ? "Good job! Some polish needed."
+            : "Keep practicing — focus on pacing and clarity.";
+      };
+
+      mediaRecorder.start();
+    } else {
+      isRecording = false;
+      recordBtn.textContent = "Start Recording";
+      status.textContent = "Processing...";
+      mediaRecorder.stop();
+    }
+  });
+
+  tryAgainBtn.addEventListener("click", () => {
+    results.classList.add("hidden");
+    accuracyBar.style.width = "0%";
+    confidenceBar.style.width = "0%";
+    toneBar.style.width = "0%";
+
+    accuracyScore.textContent = "0%";
+    confidenceScore.textContent = "0%";
+    toneScore.textContent = "0%";
+    overallScore.textContent = "0%";
+    feedback.textContent = "";
+  });
+});
+</script>
+
+
   </body>
 </html>
