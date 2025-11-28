@@ -1,688 +1,1859 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Booklings CSN — Read. Think. Discuss.</title>
-    <meta name="description" content="Booklings CSN — a student reading & discussion club. Weekly sessions, curated reads, member reviews." />
-
-    <!-- Tailwind CDN -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booklings CSN — Literary Collective</title>
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- AOS (Animate On Scroll) -->
-    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <style>
-      html{scroll-behavior: smooth;}
-      
-      /* Typewriter base */
-      .typewriter {
-        display: inline-block;
-        white-space: nowrap;
-        overflow: hidden;
-        border-right: 2px solid rgba(139, 92, 246, 0.75);
-      }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none; /* Hide default cursor */
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0a0a;
+            color: white;
+            overflow-x: hidden;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #0a0a0a;
+    color: white;
+    overflow-x: hidden;
+    font-size: 20px; /* Larger base font */
+    zoom: 1.1; /* 10% overall scale increase */
+        }
 
-      /* Vibrant gradient background */
-      .hero-gradient {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-      }
-      
-      .warm-gradient {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      }
+        /* ========== NEW CURSOR DESIGN ========== */
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 99999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease, background 0.2s ease;
+        }
 
-      /* Thin tasteful container max width */
-      .content-max { max-width: 1100px; }
+        .cursor-circle {
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(167, 139, 250, 0.8);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 99998;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+        }
 
-      /* Simple focus style for accessibility */
-      .focus-ring:focus { outline: 3px solid rgba(139, 92, 246, 0.4); outline-offset: 2px; }
+        /* Cursor hover states */
+        .cursor-dot.hover {
+            transform: translate(-50%, -50%) scale(0.5);
+            background: #a78bfa;
+        }
 
-      /* Minimal scrollbar styling for desktop */
-      ::-webkit-scrollbar { height: 10px; width: 10px; }
-      ::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.3); border-radius: 9999px; }
+        .cursor-circle.hover {
+            width: 60px;
+            height: 60px;
+            border-color: #f093fb;
+            background: rgba(167, 139, 250, 0.1);
+        }
 
-      /* Readable serif for headings */
-      .serif { font-family: ui-serif, Georgia, 'Times New Roman', serif; }
-      
-      /* Animated gradient text */
-      .gradient-text {
-        background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #667eea);
-        background-size: 300% 100%;
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-        animation: gradientShift 6s ease infinite;
-      }
-      
-      @keyframes gradientShift {
-        0%, 100% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-      }
-      
-      /* Floating animation */
-      @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-20px); }
-      }
-      
-      .float-animation {
-        animation: float 6s ease-in-out infinite;
-      }
+        /* Cursor click state */
+        .cursor-dot.clicking {
+            transform: translate(-50%, -50%) scale(0.8);
+        }
+
+        .cursor-circle.clicking {
+            width: 35px;
+            height: 35px;
+            border-width: 3px;
+        }
+
+        /* Glass Morphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-strong {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        /* Holographic Text */
+        .holo-text {
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #667eea);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: holo-shift 3s ease infinite;
+        }
+        @keyframes holo-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* 3D Canvas */
+        #threeCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Typewriter */
+        .typewriter {
+            border-right: 3px solid #a78bfa;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+
+        /* Liquid Button */
+        .liquid-button {
+            position: relative;
+            overflow: hidden;
+        }
+        .liquid-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        .liquid-button:hover::before {
+            left: 100%;
+        }
+
+        /* 3D Book Cards */
+        .book-card-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+        }
+        .book-card-3d:hover {
+            transform: rotateY(10deg) rotateX(-5deg) scale(1.05);
+        }
+
+        /* ========== ENHANCED DIGITAL BOOKSHELF ========== */
+        
+        .bookshelf-section {
+            perspective: 2000px;
+            padding: 60px 20px;
+            position: relative;
+            overflow: visible; /* FIXED: Changed from hidden */
+        }
+
+        /* Ambient Light Effects */
+        .bookshelf-section::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 60%;
+            background: radial-gradient(ellipse, rgba(167, 139, 250, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bookshelf-container {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            transform-style: preserve-3d;
+            transform: rotateX(5deg);
+            overflow: visible; /* FIXED */
+        }
+
+        /* Wooden Shelf Structure */
+        .shelf-unit {
+            position: relative;
+            margin-bottom: 30px;
+            overflow: visible; /* FIXED */
+            z-index: 1;
+        }
+
+        /* FIXED: Second shelf needs higher z-index for tooltips */
+        .shelf-unit:first-child {
+            z-index: 2;
+        }
+        
+        .shelf-unit:last-child {
+            z-index: 3;
+        }
+
+        .shelf-row {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 15px;
+            padding: 30px 40px 0;
+            position: relative;
+            z-index: 2;
+            flex-wrap: wrap;
+            overflow: visible; /* FIXED */
+        }
+
+        /* Wooden Shelf Board */
+        .shelf-board {
+            position: relative;
+            height: 25px;
+            background: linear-gradient(180deg, 
+                #8B4513 0%, 
+                #A0522D 20%, 
+                #8B4513 40%, 
+                #6B3E0A 60%, 
+                #5C3317 80%, 
+                #4A2511 100%);
+            border-radius: 3px;
+            box-shadow: 
+                0 8px 25px rgba(0, 0, 0, 0.5),
+                0 4px 10px rgba(0, 0, 0, 0.3),
+                inset 0 2px 4px rgba(255, 255, 255, 0.1),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+        /* Wood Grain Texture */
+        .shelf-board::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent 0px,
+                transparent 20px,
+                rgba(0, 0, 0, 0.1) 20px,
+                rgba(0, 0, 0, 0.1) 22px
+            );
+            border-radius: 3px;
+        }
+
+        /* Shelf Edge/Lip */
+        .shelf-board::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(180deg, 
+                #6B3E0A 0%, 
+                #5C3317 50%, 
+                #4A2511 100%);
+            border-radius: 0 0 3px 3px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Shelf Brackets */
+        .shelf-brackets {
+            position: absolute;
+            bottom: -40px;
+            left: 40px;
+            right: 40px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 0;
+        }
+
+        .bracket {
+            width: 20px;
+            height: 40px;
+            background: linear-gradient(90deg, #3d3d3d 0%, #5a5a5a 50%, #3d3d3d 100%);
+            border-radius: 0 0 5px 5px;
+            box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Enhanced 3D Book */
+        .book-3d {
+            --book-width: 55px;
+            --book-height: 200px;
+            --book-depth: 35px;
+            --book-color: #667eea;
+            --book-color-dark: #4c5fd7;
+            --book-color-light: #8b9cf0;
+            
+            position: relative;
+            width: var(--book-width);
+            height: var(--book-height);
+            transform-style: preserve-3d;
+            cursor: none;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transform: translateZ(0);
+            z-index: 1;
+        }
+
+        /* FIXED: Ensure hovered book is on top */
+        .book-3d:hover {
+            transform: translateZ(30px) translateY(-15px) rotateX(-5deg);
+            z-index: 1000 !important;
+        }
+
+        /* Book Sizes */
+        .book-3d.tall { --book-height: 230px; }
+        .book-3d.short { --book-height: 170px; }
+        .book-3d.wide { --book-width: 70px; --book-depth: 45px; }
+        .book-3d.thin { --book-width: 40px; --book-depth: 25px; }
+
+        /* Book Colors */
+        .book-3d.purple { 
+            --book-color: #7c3aed; 
+            --book-color-dark: #5b21b6; 
+            --book-color-light: #a78bfa; 
+        }
+        .book-3d.pink { 
+            --book-color: #ec4899; 
+            --book-color-dark: #be185d; 
+            --book-color-light: #f472b6; 
+        }
+        .book-3d.blue { 
+            --book-color: #3b82f6; 
+            --book-color-dark: #1d4ed8; 
+            --book-color-light: #60a5fa; 
+        }
+        .book-3d.green { 
+            --book-color: #10b981; 
+            --book-color-dark: #047857; 
+            --book-color-light: #34d399; 
+        }
+        .book-3d.red { 
+            --book-color: #ef4444; 
+            --book-color-dark: #b91c1c; 
+            --book-color-light: #f87171; 
+        }
+        .book-3d.orange { 
+            --book-color: #f97316; 
+            --book-color-dark: #c2410c; 
+            --book-color-light: #fb923c; 
+        }
+        .book-3d.teal { 
+            --book-color: #14b8a6; 
+            --book-color-dark: #0f766e; 
+            --book-color-light: #2dd4bf; 
+        }
+        .book-3d.indigo { 
+            --book-color: #6366f1; 
+            --book-color-dark: #4338ca; 
+            --book-color-light: #818cf8; 
+        }
+        .book-3d.amber { 
+            --book-color: #f59e0b; 
+            --book-color-dark: #b45309; 
+            --book-color-light: #fbbf24; 
+        }
+        .book-3d.rose { 
+            --book-color: #f43f5e; 
+            --book-color-dark: #be123c; 
+            --book-color-light: #fb7185; 
+        }
+
+        .book-3d:hover .book-spine {
+            box-shadow: 
+                inset 2px 0 10px rgba(255,255,255,0.3),
+                inset -2px 0 5px rgba(0,0,0,0.3),
+                0 0 30px rgba(167, 139, 250, 0.5);
+        }
+
+        /* Book Spine (Front Face) */
+        .book-spine {
+            position: absolute;
+            width: var(--book-width);
+            height: var(--book-height);
+            background: linear-gradient(90deg, 
+                var(--book-color-dark) 0%, 
+                var(--book-color) 15%, 
+                var(--book-color-light) 50%, 
+                var(--book-color) 85%, 
+                var(--book-color-dark) 100%);
+            border-radius: 3px 8px 8px 3px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 5px;
+            box-shadow: 
+                inset 2px 0 8px rgba(255,255,255,0.2),
+                inset -2px 0 5px rgba(0,0,0,0.3);
+            transform: translateZ(calc(var(--book-depth) / 2));
+            overflow: hidden;
+            transition: box-shadow 0.3s ease;
+        }
+
+        /* Spine Decorations */
+        .book-spine::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+            border-radius: 2px;
+        }
+
+        .book-spine::after {
+            content: '';
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+            border-radius: 2px;
+        }
+
+        /* Spine Title */
+        .spine-title {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+            font-size: 11px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.95);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            max-height: 70%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .spine-author {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+            font-size: 8px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 10px;
+            letter-spacing: 1px;
+        }
+
+        /* Book Top */
+        .book-top {
+            position: absolute;
+            width: var(--book-width);
+            height: var(--book-depth);
+            background: linear-gradient(180deg, 
+                #f5f5dc 0%, 
+                #e8e4c9 30%,
+                #ddd8b8 70%,
+                #d4cfab 100%);
+            transform: rotateX(90deg) translateZ(calc(var(--book-height) / 2));
+            border-radius: 0 3px 3px 0;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Page Lines on Top */
+        .book-top::before {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            right: 8px;
+            background: repeating-linear-gradient(
+                90deg,
+                #ccc 0px,
+                #ccc 1px,
+                transparent 1px,
+                transparent 3px
+            );
+            opacity: 0.5;
+        }
+
+        /* Book Bottom */
+        .book-bottom {
+            position: absolute;
+            width: var(--book-width);
+            height: var(--book-depth);
+            background: linear-gradient(180deg, 
+                #d4cfab 0%, 
+                #c9c49d 50%,
+                #beb98f 100%);
+            transform: rotateX(-90deg) translateZ(calc(var(--book-height) / 2));
+            border-radius: 0 3px 3px 0;
+        }
+
+        /* Book Cover (Right Side) */
+        .book-cover {
+            position: absolute;
+            width: var(--book-depth);
+            height: var(--book-height);
+            background: linear-gradient(90deg, 
+                var(--book-color) 0%, 
+                var(--book-color-dark) 100%);
+            transform: rotateY(90deg) translateZ(calc(var(--book-width) - var(--book-depth) / 2));
+            border-radius: 0 5px 5px 0;
+            box-shadow: 
+                inset -5px 0 15px rgba(0, 0, 0, 0.3),
+                5px 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Book Back */
+        .book-back {
+            position: absolute;
+            width: var(--book-width);
+            height: var(--book-height);
+            background: linear-gradient(90deg, 
+                var(--book-color-dark) 0%, 
+                var(--book-color) 50%, 
+                var(--book-color-dark) 100%);
+            transform: translateZ(calc(var(--book-depth) / -2));
+            border-radius: 3px;
+        }
+
+        /* Book Pages (Left Side) */
+        .book-pages {
+            position: absolute;
+            width: var(--book-depth);
+            height: var(--book-height);
+            background: linear-gradient(90deg, 
+                #fff 0%, 
+                #f8f5e6 10%,
+                #f5f2e0 90%,
+                #e8e4c9 100%);
+            transform: rotateY(-90deg) translateZ(calc(var(--book-depth) / 2));
+            border-radius: 2px;
+            box-shadow: inset 5px 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Page Lines */
+        .book-pages::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            bottom: 5px;
+            left: 5px;
+            right: 2px;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent 0px,
+                transparent 3px,
+                rgba(0, 0, 0, 0.03) 3px,
+                rgba(0, 0, 0, 0.03) 4px
+            );
+        }
+
+        /* Gold Emblem on some books */
+        .book-emblem {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, #ffd700 0%, #b8860b 70%, #8b6914 100%);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 
+                0 0 10px rgba(255, 215, 0, 0.5),
+                inset 0 -2px 5px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+
+        .book-3d.has-emblem .book-emblem {
+            display: block;
+        }
+
+        /* FIXED: Book Info Tooltip - improved positioning and z-index */
+        .book-info {
+            position: absolute;
+            bottom: calc(100% + 25px);
+            left: 50%;
+            transform: translateX(-50%) scale(0.8) translateY(10px);
+            background: rgba(15, 15, 20, 0.98);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            border-radius: 16px;
+            width: 250px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            z-index: 10000 !important;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+            pointer-events: none;
+        }
+
+        .book-3d:hover .book-info {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) scale(1) translateY(0);
+        }
+
+        .book-info::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 10px solid transparent;
+            border-top-color: rgba(15, 15, 20, 0.98);
+        }
+
+        .book-info h4 {
+            font-size: 16px;
+            font-weight: 800;
+            margin-bottom: 5px;
+            background: linear-gradient(90deg, #fff, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .book-info .author {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 10px;
+        }
+
+        .book-info .description {
+            font-size: 13px;
+            color: #aaa;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .book-info .genre-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: linear-gradient(135deg, rgba(167, 139, 250, 0.2), rgba(236, 72, 153, 0.2));
+            border-radius: 20px;
+            font-size: 11px;
+            color: #a78bfa;
+            font-weight: 600;
+            border: 1px solid rgba(167, 139, 250, 0.3);
+        }
+
+        /* Floating Dust Particles */
+        .dust-particles {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .dust {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float-dust 8s infinite ease-in-out;
+        }
+
+        @keyframes float-dust {
+            0%, 100% { 
+                transform: translateY(0) translateX(0); 
+                opacity: 0;
+            }
+            10% { opacity: 0.5; }
+            50% { 
+                transform: translateY(-100px) translateX(30px); 
+                opacity: 0.3;
+            }
+            90% { opacity: 0.5; }
+        }
+
+        /* Bookends */
+        .bookend {
+            width: 25px;
+            height: 120px;
+            background: linear-gradient(135deg, #4a4a4a 0%, #2d2d2d 50%, #1a1a1a 100%);
+            border-radius: 3px;
+            position: relative;
+            align-self: flex-end;
+            box-shadow: 
+                5px 5px 20px rgba(0, 0, 0, 0.4),
+                inset 2px 2px 5px rgba(255, 255, 255, 0.1);
+            transform-style: preserve-3d;
+            flex-shrink: 0;
+        }
+
+        .bookend::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 15px;
+            background: linear-gradient(135deg, #4a4a4a 0%, #2d2d2d 100%);
+            border-radius: 3px;
+            transform: translateZ(-10px);
+        }
+
+        .bookend.horse::after {
+            content: '🐴';
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20px;
+        }
+
+        .bookend.globe::after {
+            content: '🌍';
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20px;
+        }
+
+        /* Decorative Plant */
+        .shelf-plant {
+            font-size: 50px;
+            align-self: flex-end;
+            transform: translateY(10px);
+            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+            flex-shrink: 0;
+        }
+
+        /* Ambient Glow under shelf */
+        .shelf-glow {
+            position: absolute;
+            bottom: -30px;
+            left: 10%;
+            right: 10%;
+            height: 60px;
+            background: radial-gradient(ellipse at center, rgba(167, 139, 250, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* 3D Carousel */
+        .carousel-3d-container {
+            perspective: 1500px;
+            height: 500px;
+            position: relative;
+        }
+        .carousel-3d {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1s ease;
+        }
+        .carousel-3d-item {
+            position: absolute;
+            width: 400px;
+            height: 300px;
+            left: 50%;
+            top: 50%;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            transition: all 0.5s ease;
+        }
+        .carousel-3d-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: none;
+            transition: transform 0.3s ease;
+        }
+        .carousel-3d-item img:hover {
+            transform: scale(1.1);
+        }
+
+        /* Philosophy Cards */
+        .philosophy-card {
+            transition: all 0.4s ease;
+            cursor: none;
+        }
+        .philosophy-card:hover {
+            transform: translateY(-10px) scale(1.02);
+        }
+
+        /* Modal */
+        .modal-backdrop {
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            z-index: 9998;
+            transform-origin: left;
+        }
+
+        /* Mobile Menu */
+        @media (max-width: 768px) {
+            /* Show default cursor on mobile */
+            * {
+                cursor: auto;
+            }
+            .cursor-dot, .cursor-circle {
+                display: none;
+            }
+            .hero-section h1 {
+                font-size: 3rem;
+            }
+            .carousel-3d-item {
+                width: 300px;
+                height: 225px;
+            }
+            .book-3d {
+                --book-width: 40px;
+                --book-height: 140px;
+                --book-depth: 25px;
+            }
+            .book-3d.tall { --book-height: 160px; }
+            .book-3d.short { --book-height: 120px; }
+            .shelf-row {
+                gap: 8px;
+                padding: 20px 15px 0;
+            }
+            .book-info {
+                width: 200px;
+                padding: 15px;
+            }
+            .bookend, .shelf-plant {
+                display: none;
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+            .book-3d {
+                --book-width: 45px;
+                --book-height: 170px;
+                --book-depth: 30px;
+            }
+            .book-3d.tall { --book-height: 195px; }
+            .book-3d.short { --book-height: 145px; }
+        }
     </style>
-  </head>
-  <body class="bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 text-slate-800 antialiased leading-relaxed">
+</head>
+<body>
 
-    <!-- NAV -->
-    <header class="sticky top-0 z-30 backdrop-blur-md bg-white/70 border-b border-purple-200 shadow-sm">
-      <div class="mx-auto content-max px-6 py-4 flex items-center justify-between">
-        <a href="#hero" class="flex items-center gap-3 text-purple-900">
-          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden>
-            <rect x="3" y="4" width="14" height="16" rx="1.5" stroke="currentColor" stroke-width="1.2"></rect>
-            <path d="M7 8h8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"></path>
-            <path d="M7 12h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"></path>
-          </svg>
-          <div class="text-sm">
-            <div class="font-bold gradient-text">Booklings CSN</div>
-            <div class="text-xs text-purple-600">Reading • Analysis • Discussion</div>
-          </div>
-        </a>
+<!-- NEW CURSOR ELEMENTS -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-circle" id="cursorCircle"></div>
 
-        <nav class="hidden md:flex items-center gap-6 text-sm text-slate-700 font-medium">
-          <a href="#philosophy" class="hover:text-purple-600 transition-colors">Philosophy</a>
-          <a href="#featured" class="hover:text-purple-600 transition-colors">Featured</a>
-          <a href="#archives" class="hover:text-purple-600 transition-colors">Archives</a>
-          <a href="#reviews" class="hover:text-purple-600 transition-colors">Reviews</a>
-          <a href="#join" class="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-lg transition-all">Join</a>
-        </nav>
+<div class="scroll-progress" id="scrollProgress"></div>
+<canvas id="threeCanvas"></canvas>
 
-        <button id="mobileMenuBtn" class="md:hidden focus-ring p-2 rounded-md text-purple-600">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path d="M4 6h16M4 12h16M4 18h16" stroke-width="1.6" stroke-linecap="round"></path>
-          </svg>
-        </button>
-      </div>
-
-      <!-- Mobile menu -->
-      <div id="mobileMenu" class="md:hidden hidden border-t border-purple-100 bg-white/90 backdrop-blur-sm">
-        <div class="px-6 py-4 flex flex-col gap-3 text-sm">
-          <a href="#philosophy" class="py-2 hover:text-purple-600">Philosophy</a>
-          <a href="#featured" class="py-2 hover:text-purple-600">Featured</a>
-          <a href="#archives" class="py-2 hover:text-purple-600">Archives</a>
-          <a href="#reviews" class="py-2 hover:text-purple-600">Reviews</a>
-          <a href="#join" class="py-2 font-medium bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg px-4 py-3 text-center">Join</a>
-        </div>
-      </div>
-    </header>
-
-    <!-- HERO -->
-    <main id="hero">
-      <section class="hero-gradient relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10">
-          <div class="absolute top-20 left-20 w-72 h-72 bg-white rounded-full blur-3xl"></div>
-          <div class="absolute bottom-20 right-20 w-96 h-96 bg-pink-300 rounded-full blur-3xl"></div>
-        </div>
-        
-        <div class="content-max mx-auto px-6 pt-16 pb-20 lg:pt-24 lg:pb-32 relative z-10">
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div data-aos="fade-right" data-aos-duration="800" class="space-y-6">
-              <h1 class="serif text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-tight text-white drop-shadow-lg">Read. Think. Discuss.</h1>
-              <p class="text-white/95 max-w-xl text-lg">Booklings CSN is a student-led collective devoted to close reading, critical discussion, and shared notes. We treat books like arguments — we interrogate them, annotate them, and debate their claims.</p>
-
-              <div class="flex gap-4">
-                <a href="#join" class="inline-block px-6 py-4 rounded-xl bg-white text-purple-700 text-sm font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-105">Join the Club</a>
-                <a href="#featured" class="inline-block px-6 py-4 rounded-xl border-2 border-white text-white text-sm font-bold hover:bg-white/10 transition-all">Browse Sessions</a>
-              </div>
-
-              <div class="mt-8 text-sm text-white/90 flex items-center gap-2">
-                <span class="font-semibold">Current focus:</span>
-                <span id="typewriter" class="typewriter font-medium text-yellow-200"></span>
-              </div>
+<div class="content-wrapper">
+    
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-strong">
+        <div class="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
+            <div class="font-black text-2xl holo-text">Booklings CSN</div>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#featured" class="text-gray-300 hover:text-white transition-colors font-medium">Featured</a>
+                <a href="#gallery" class="text-gray-300 hover:text-white transition-colors font-medium">Gallery</a>
+                <a href="#reviews" class="text-gray-300 hover:text-white transition-colors font-medium">Reviews</a>
+                <a href="#join" class="px-6 py-3 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold hover:shadow-lg hover:shadow-purple-500/50 transition-all">Join Us</a>
             </div>
 
-            <div data-aos="fade-left" data-aos-duration="800" class="relative float-animation">
-              <div class="aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border-4 border-white/30 bg-gradient-to-br from-pink-200 via-purple-200 to-indigo-200 relative">
-                <div class="absolute inset-0 flex items-center justify-center p-12">
-                  <svg viewBox="0 0 200 200" class="w-full h-full opacity-90" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Stack of books illustration -->
-                    <g>
-                      <!-- Book 1 (bottom) -->
-                      <rect x="40" y="120" width="120" height="20" rx="2" fill="#8b5cf6" opacity="0.9"/>
-                      <rect x="40" y="120" width="120" height="4" rx="1" fill="#6d28d9"/>
-                      <line x1="100" y1="120" x2="100" y2="140" stroke="#6d28d9" stroke-width="1.5"/>
-                      
-                      <!-- Book 2 (middle) -->
-                      <rect x="50" y="95" width="100" height="22" rx="2" fill="#ec4899" opacity="0.9"/>
-                      <rect x="50" y="95" width="100" height="4" rx="1" fill="#db2777"/>
-                      <line x1="100" y1="95" x2="100" y2="117" stroke="#db2777" stroke-width="1.5"/>
-                      
-                      <!-- Book 3 (top) -->
-                      <rect x="60" y="72" width="80" height="20" rx="2" fill="#3b82f6" opacity="0.9"/>
-                      <rect x="60" y="72" width="80" height="3" rx="1" fill="#2563eb"/>
-                      <line x1="100" y1="72" x2="100" y2="92" stroke="#2563eb" stroke-width="1.5"/>
-                      
-                      <!-- Open book on top -->
-                      <path d="M 70 60 Q 100 50 130 60 L 130 70 Q 100 60 70 70 Z" fill="#fef3c7" stroke="#fbbf24" stroke-width="2"/>
-                      <line x1="100" y1="50" x2="100" y2="70" stroke="#fbbf24" stroke-width="2"/>
-                      <path d="M 75 62 L 95 58" stroke="#f59e0b" stroke-width="0.8" opacity="0.7"/>
-                      <path d="M 75 66 L 90 63" stroke="#f59e0b" stroke-width="0.8" opacity="0.7"/>
-                      <path d="M 105 58 L 125 62" stroke="#f59e0b" stroke-width="0.8" opacity="0.7"/>
-                      <path d="M 110 63 L 125 66" stroke="#f59e0b" stroke-width="0.8" opacity="0.7"/>
-                    </g>
-                  </svg>
-                </div>
-                <div class="absolute bottom-6 left-0 right-0 text-center">
-                  <div class="text-purple-900 font-bold text-xl">Booklings CSN</div>
-                  <div class="text-purple-700 text-sm mt-1 font-medium">Student Reading Collective</div>
-                </div>
-              </div>
-              <div class="mt-4 text-xs text-white/80 text-center">Editorial selection • rotating every month</div>
+            <!-- Mobile Menu Button -->
+            <button id="mobileMenuBtn" class="md:hidden text-white text-2xl">☰</button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden glass-strong border-t border-white/10">
+            <div class="px-6 py-4 space-y-4">
+                <a href="#featured" class="block text-gray-300 hover:text-white transition-colors">Featured</a>
+                <a href="#gallery" class="block text-gray-300 hover:text-white transition-colors">Gallery</a>
+                <a href="#reviews" class="block text-gray-300 hover:text-white transition-colors">Reviews</a>
+                <a href="#join" class="block text-center px-6 py-3 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold">Join Us</a>
             </div>
-          </div>
         </div>
-      </section>
+    </nav>
 
-      <!-- SECTION 2: PHILOSOPHY -->
-      <section id="philosophy" data-aos="fade-up" data-aos-duration="700" class="bg-white">
-        <div class="content-max mx-auto px-6 py-20">
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-            <div class="lg:col-span-2">
-              <h2 class="serif text-4xl font-bold gradient-text">Our Reading Philosophy</h2>
-              <p class="mt-4 text-slate-700 max-w-prose text-lg">We value close reading over casual consumption. Sessions focus on passages rather than plot summaries. Members bring annotations, opposing interpretations are encouraged, and every reading concludes with a short written takeaway shared in the club archive.</p>
-
-              <ul class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6 text-slate-700">
-                <li class="flex gap-3">
-                  <span class="text-2xl text-purple-600 font-bold">•</span>
-                  <div><strong class="text-purple-700">Curated selections</strong> — each month features a theme chosen by voted members.</div>
-                </li>
-                <li class="flex gap-3">
-                  <span class="text-2xl text-pink-600 font-bold">•</span>
-                  <div><strong class="text-pink-700">Notes-first</strong> — participants prepare margin notes to spark focused conversation.</div>
-                </li>
-                <li class="flex gap-3">
-                  <span class="text-2xl text-blue-600 font-bold">•</span>
-                  <div><strong class="text-blue-700">Cross-disciplinary</strong> — we mix fiction, essays, philosophy, and science writing.</div>
-                </li>
-                <li class="flex gap-3">
-                  <span class="text-2xl text-indigo-600 font-bold">•</span>
-                  <div><strong class="text-indigo-700">Open debate</strong> — ideas are critiqued respectfully and rigorously.</div>
-                </li>
-              </ul>
-            </div>
-
-            <aside class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-8 border-2 border-purple-200 shadow-lg">
-              <h3 class="text-lg font-bold text-purple-900">How sessions run</h3>
-              <ol class="mt-4 text-sm text-slate-700 list-decimal pl-5 space-y-3 font-medium">
-                <li>Pre-read + submit two annotations.</li>
-                <li>30–40 minute focused discussion on a passage.</li>
-                <li>Collective takeaway & notes published to archive.</li>
-              </ol>
-            </aside>
-          </div>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="text-center px-6 max-w-6xl mx-auto">
+            <h1 class="text-7xl md:text-8xl font-black mb-8 leading-tight">
+                <span class="holo-text">Booklings</span>
+                <br />
+                <span class="text-white">Reading Collective</span>
+            </h1>
+            <p class="text-2xl md:text-3xl text-gray-300 mb-6 font-light">
+                <span id="typewriter" class="typewriter"></span>
+            </p>
+            <p class="text-gray-400 text-lg md:text-xl mb-12 max-w-3xl mx-auto leading-relaxed">
+                We gather weekly to read critically, debate interpretations, and publish student-authored essays and notes. No passive reading — every session is a deep dive.
+            </p>
+            <a href="#join" class="magnetic-btn liquid-button inline-block px-10 py-5 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xl font-black hover:shadow-2xl hover:shadow-purple-500/50 transition-all hover:scale-105">
+                Apply Now
+            </a>
         </div>
-      </section>
+    </section>
 
-      <!-- SECTION 3: FEATURED BOOKS -->
-      <section id="featured" data-aos="fade-up" data-aos-duration="700" class="bg-gradient-to-br from-blue-50 to-purple-50">
-        <div class="content-max mx-auto px-6 py-20">
-          <div class="flex items-baseline justify-between">
-            <h2 class="serif text-4xl font-bold gradient-text">Featured — This Month</h2>
-            <div class="text-sm text-purple-600 font-medium">Curated by club moderators</div>
-          </div>
+    <!-- Featured Books with 3D Cards -->
+    <section id="featured" class="py-32">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-6xl font-black holo-text mb-8">Current Reads</h2>
+            <p class="text-gray-300 text-xl mb-16">This semester's selections span philosophy, fiction, and critical essays.</p>
 
-          <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            <article data-aos="zoom-in" data-aos-duration="600" class="border-2 border-orange-300 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all hover:scale-105 bg-white">
-              <div class="aspect-[3/4] bg-gradient-to-br from-amber-200 via-orange-300 to-red-400 flex items-center justify-center p-6 relative overflow-hidden">
-                <div class="absolute inset-0 opacity-20">
-                  <div class="absolute top-4 left-4 w-32 h-32 bg-yellow-400 rounded-full blur-3xl"></div>
-                  <div class="absolute bottom-4 right-4 w-40 h-40 bg-red-600 rounded-full blur-3xl"></div>
-                </div>
-                <div class="relative text-center p-4">
-                  <div class="text-6xl font-bold text-red-900 mb-3 serif">1984</div>
-                  <div class="text-xs uppercase tracking-wider text-red-800 font-bold">George Orwell</div>
-                  <div class="mt-4 w-20 h-1.5 bg-red-800 mx-auto rounded-full"></div>
-                </div>
-              </div>
-              <div class="p-6">
-                <h3 class="font-bold text-xl text-orange-900">1984</h3>
-                <div class="text-xs text-orange-600 mt-1 font-semibold">George Orwell</div>
-                <p class="mt-3 text-sm text-slate-700">A dystopian masterpiece exploring surveillance, truth, and autonomy. Essential reading for understanding power structures in modern society.</p>
-                <div class="mt-4 text-xs text-orange-600 font-bold">Session date: Nov 27, 2025</div>
-              </div>
-            </article>
-
-            <article data-aos="zoom-in" data-aos-duration="700" class="border-2 border-indigo-300 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all hover:scale-105 bg-white">
-              <div class="aspect-[3/4] bg-gradient-to-br from-indigo-300 via-purple-400 to-pink-400 flex items-center justify-center p-6 relative overflow-hidden">
-                <div class="absolute inset-0 opacity-20">
-                  <div class="absolute top-4 right-4 w-32 h-32 bg-indigo-600 rounded-full blur-3xl"></div>
-                  <div class="absolute bottom-4 left-4 w-40 h-40 bg-purple-600 rounded-full blur-3xl"></div>
-                </div>
-                <div class="relative text-center p-4">
-                  <div class="text-5xl font-bold text-indigo-900 mb-3 serif leading-tight">The Stranger</div>
-                  <div class="text-xs uppercase tracking-wider text-indigo-800 font-bold">Albert Camus</div>
-                  <div class="mt-4 w-20 h-1.5 bg-indigo-800 mx-auto rounded-full"></div>
-                </div>
-              </div>
-              <div class="p-6">
-                <h3 class="font-bold text-xl text-indigo-900">The Stranger</h3>
-                <div class="text-xs text-indigo-600 mt-1 font-semibold">Albert Camus</div>
-                <p class="mt-3 text-sm text-slate-700">Camus' existential meditation on absurdism and alienation. Perfect for debating the nature of meaning and moral responsibility.</p>
-                <div class="mt-4 text-xs text-indigo-600 font-bold">Session date: Dec 4, 2025</div>
-              </div>
-            </article>
-
-            <article data-aos="zoom-in" data-aos-duration="800" class="border-2 border-emerald-300 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all hover:scale-105 bg-white">
-              <div class="aspect-[3/4] bg-gradient-to-br from-emerald-300 via-teal-400 to-cyan-400 flex items-center justify-center p-6 relative overflow-hidden">
-                <div class="absolute inset-0 opacity-20">
-                  <div class="absolute top-4 left-4 w-32 h-32 bg-emerald-600 rounded-full blur-3xl"></div>
-                  <div class="absolute bottom-4 right-4 w-40 h-40 bg-teal-600 rounded-full blur-3xl"></div>
-                </div>
-                <div class="relative text-center p-4">
-                  <div class="text-4xl font-bold text-emerald-900 mb-3 serif leading-tight">Sapiens</div>
-                  <div class="text-xs uppercase tracking-wider text-emerald-800 font-bold mt-2">Yuval Noah Harari</div>
-                  <div class="mt-4 w-20 h-1.5 bg-emerald-800 mx-auto rounded-full"></div>
-                </div>
-              </div>
-              <div class="p-6">
-                <h3 class="font-bold text-xl text-emerald-900">Sapiens</h3>
-                <div class="text-xs text-emerald-600 mt-1 font-semibold">Yuval Noah Harari</div>
-                <p class="mt-3 text-sm text-slate-700">A sweeping history of humankind that challenges our assumptions. Ideal for cross-disciplinary discussions on culture, science, and progress.</p>
-                <div class="mt-4 text-xs text-emerald-600 font-bold">Session date: Dec 11, 2025</div>
-              </div>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <!-- SECTION 4: WEEKLY DISCUSSION ARCHIVES -->
-      <section id="archives" data-aos="fade-up" data-aos-duration="700" class="bg-white">
-        <div class="content-max mx-auto px-6 py-20">
-          <h2 class="serif text-4xl font-bold gradient-text">Discussion Archives</h2>
-          <p class="mt-3 text-slate-700 max-w-prose text-lg">A searchable, chronological archive of past sessions, passage notes, and key takeaways.</p>
-
-          <div class="mt-10 space-y-6">
-            <article data-aos="fade-up" data-aos-duration="500" class="p-6 rounded-2xl border-2 border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50 shadow-lg hover:shadow-xl transition-shadow">
-              <div class="flex justify-between items-start">
-                <div>
-                  <h3 class="font-bold text-lg text-purple-900">Close reading: Chapter 3 (Poetic Form)</h3>
-                  <div class="text-xs text-purple-600 mt-1 font-medium">Nov 10, 2025 • 14 attendees</div>
-                </div>
-                <a href="#" class="text-sm text-purple-700 font-bold underline hover:text-purple-900">Download notes</a>
-              </div>
-              <p class="mt-3 text-slate-700">Key takeaway: a short sentence capturing the decisive interpretive move from the discussion.</p>
-            </article>
-
-            <article data-aos="fade-up" data-aos-duration="600" class="p-6 rounded-2xl border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 shadow-lg hover:shadow-xl transition-shadow">
-              <div class="flex justify-between items-start">
-                <div>
-                  <h3 class="font-bold text-lg text-blue-900">Essay cluster: Narrative and Ethics</h3>
-                  <div class="text-xs text-blue-600 mt-1 font-medium">Oct 27, 2025 • 18 attendees</div>
-                </div>
-                <a href="#" class="text-sm text-blue-700 font-bold underline hover:text-blue-900">Download notes</a>
-              </div>
-              <p class="mt-3 text-slate-700">Key takeaway: participants disagreed about authorial intent and argued for plural readings.</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <!-- SECTION 5: READING STATS GAME -->
-      <section id="stats" data-aos="fade-up" data-aos-duration="700" class="bg-white">
-        <div class="content-max mx-auto px-6 py-20">
-          <h2 class="serif text-4xl font-bold gradient-text text-center">Test Your Reading Skills</h2>
-          <p class="mt-3 text-slate-700 max-w-2xl text-lg text-center mx-auto">Read a passage aloud and get instant feedback on your accuracy, confidence, and tone. Our AI analyzes your voice to help you become a better reader.</p>
-
-          <div class="mt-12 max-w-3xl mx-auto">
-            <!-- Passage to Read -->
-            <div class="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-3xl p-8 shadow-xl mb-8">
-              <h3 class="text-xl font-bold text-purple-900 mb-4">Read this passage aloud:</h3>
-              <div id="passageText" class="text-lg text-slate-800 leading-relaxed font-serif italic bg-white/50 p-6 rounded-xl border border-purple-100">
-                "It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness."
-              </div>
-              <div class="text-sm text-slate-600 mt-3 text-right">— Charles Dickens, A Tale of Two Cities</div>
-            </div>
-
-            <!-- Recording Controls -->
-            <div class="bg-white border-2 border-purple-300 rounded-3xl p-8 shadow-xl mb-8">
-              <div class="flex flex-col items-center gap-6">
-                <button id="recordBtn" type="button" class="px-12 py-6 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xl font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">
-                  Start Recording
-                </button>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
                 
-                <div id="recordingStatus" class="text-sm text-slate-600 font-medium h-6"></div>
-                
-                <div id="listeningIndicator" class="hidden">
-                  <div class="flex gap-2 items-end justify-center h-12">
-                    <div class="w-2 bg-purple-500 rounded-full animate-pulse" style="height: 20%; animation-delay: 0s;"></div>
-                    <div class="w-2 bg-pink-500 rounded-full animate-pulse" style="height: 40%; animation-delay: 0.1s;"></div>
-                    <div class="w-2 bg-purple-500 rounded-full animate-pulse" style="height: 60%; animation-delay: 0.2s;"></div>
-                    <div class="w-2 bg-pink-500 rounded-full animate-pulse" style="height: 80%; animation-delay: 0.3s;"></div>
-                    <div class="w-2 bg-purple-500 rounded-full animate-pulse" style="height: 100%; animation-delay: 0.4s;"></div>
-                    <div class="w-2 bg-pink-500 rounded-full animate-pulse" style="height: 80%; animation-delay: 0.5s;"></div>
-                    <div class="w-2 bg-purple-500 rounded-full animate-pulse" style="height: 60%; animation-delay: 0.6s;"></div>
-                    <div class="w-2 bg-pink-500 rounded-full animate-pulse" style="height: 40%; animation-delay: 0.7s;"></div>
-                    <div class="w-2 bg-purple-500 rounded-full animate-pulse" style="height: 20%; animation-delay: 0.8s;"></div>
-                  </div>
+                <div class="book-card-3d glass-strong rounded-3xl p-8 hover:shadow-2xl hover:shadow-purple-500/30 transition-all">
+                    <div class="w-full h-80 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl mb-6 flex items-center justify-center text-6xl font-black text-white shadow-2xl">
+                        📖
+                    </div>
+                    <h3 class="text-3xl font-black mb-3 text-purple-400">The Stranger</h3>
+                    <p class="text-gray-400 mb-2 text-sm">Albert Camus</p>
+                    <p class="text-gray-300 leading-relaxed mb-4">Existentialist classic exploring absurdism and alienation through a detached protagonist's journey.</p>
+                    <span class="inline-block px-4 py-2 rounded-full bg-purple-600/20 text-purple-400 text-sm font-bold">Philosophy</span>
                 </div>
-              </div>
+
+                <div class="book-card-3d glass-strong rounded-3xl p-8 hover:shadow-2xl hover:shadow-pink-500/30 transition-all">
+                    <div class="w-full h-80 bg-gradient-to-br from-pink-600 to-red-600 rounded-2xl mb-6 flex items-center justify-center text-6xl font-black text-white shadow-2xl">
+                        🔥
+                    </div>
+                    <h3 class="text-3xl font-black mb-3 text-pink-400">Beloved</h3>
+                    <p class="text-gray-400 mb-2 text-sm">Toni Morrison</p>
+                    <p class="text-gray-300 leading-relaxed mb-4">Haunting narrative about memory, trauma, and the ghost of slavery in post-Civil War America.</p>
+                    <span class="inline-block px-4 py-2 rounded-full bg-pink-600/20 text-pink-400 text-sm font-bold">Fiction</span>
+                </div>
+
+                <div class="book-card-3d glass-strong rounded-3xl p-8 hover:shadow-2xl hover:shadow-blue-500/30 transition-all">
+                    <div class="w-full h-80 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl mb-6 flex items-center justify-center text-6xl font-black text-white shadow-2xl">
+                        💭
+                    </div>
+                    <h3 class="text-3xl font-black mb-3 text-blue-400">Essays</h3>
+                    <p class="text-gray-400 mb-2 text-sm">Michel de Montaigne</p>
+                    <p class="text-gray-300 leading-relaxed mb-4">Foundational personal essays covering human nature, mortality, and the art of living deliberately.</p>
+                    <span class="inline-block px-4 py-2 rounded-full bg-blue-600/20 text-blue-400 text-sm font-bold">Essays</span>
+                </div>
+
             </div>
-
-            <!-- Results -->
-            <div id="results" class="hidden">
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <!-- Accuracy -->
-                <div class="bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-300 rounded-3xl p-6 shadow-xl">
-                  <h3 class="text-lg font-bold text-purple-900 mb-4">Accuracy</h3>
-                  <div class="relative w-full h-3 bg-purple-200 rounded-full overflow-hidden mb-3">
-                    <div id="accuracyBar" class="absolute top-0 left-0 h-full bg-gradient-to-r from-purple-500 to-purple-700 rounded-full transition-all duration-1000" style="width: 0%"></div>
-                  </div>
-                  <div class="text-4xl font-bold text-purple-900" id="accuracyScore">0%</div>
-                  <div class="text-xs text-purple-700 mt-2">Word precision & pronunciation</div>
-                </div>
-
-                <!-- Confidence -->
-                <div class="bg-gradient-to-br from-pink-50 to-pink-100 border-2 border-pink-300 rounded-3xl p-6 shadow-xl">
-                  <h3 class="text-lg font-bold text-pink-900 mb-4">Confidence</h3>
-                  <div class="relative w-full h-3 bg-pink-200 rounded-full overflow-hidden mb-3">
-                    <div id="confidenceBar" class="absolute top-0 left-0 h-full bg-gradient-to-r from-pink-500 to-pink-700 rounded-full transition-all duration-1000" style="width: 0%"></div>
-                  </div>
-                  <div class="text-4xl font-bold text-pink-900" id="confidenceScore">0%</div>
-                  <div class="text-xs text-pink-700 mt-2">Voice clarity & steadiness</div>
-                </div>
-
-                <!-- Tone -->
-                <div class="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-300 rounded-3xl p-6 shadow-xl">
-                  <h3 class="text-lg font-bold text-blue-900 mb-4">Tone</h3>
-                  <div class="relative w-full h-3 bg-blue-200 rounded-full overflow-hidden mb-3">
-                    <div id="toneBar" class="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-blue-700 rounded-full transition-all duration-1000" style="width: 0%"></div>
-                  </div>
-                  <div class="text-4xl font-bold text-blue-900" id="toneScore">0%</div>
-                  <div class="text-xs text-blue-700 mt-2">Expression & engagement</div>
-                </div>
-              </div>
-
-              <div class="bg-gradient-to-r from-purple-100 to-pink-100 border-2 border-purple-200 rounded-2xl p-6 shadow-lg text-center">
-                <div class="text-sm text-slate-600 font-medium mb-2">Overall Reading Score</div>
-                <div class="text-5xl font-bold gradient-text" id="overallScore">0%</div>
-                <div id="feedback" class="text-sm text-slate-700 mt-4"></div>
-              </div>
-
-              <div class="text-center mt-6">
-                <button id="tryAgainBtn" class="px-8 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105">
-                  Try Again
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
-      </section>
+    </section>
 
-      <!-- SECTION 6: STUDENT INSIGHTS -->
-      <section id="insights" data-aos="fade-up" data-aos-duration="700" class="bg-gradient-to-br from-pink-50 to-purple-50">
-        <div class="content-max mx-auto px-6 py-20">
-          <h2 class="serif text-4xl font-bold gradient-text">Student Insights</h2>
-          <p class="mt-3 text-slate-700 max-w-prose text-lg">Short, direct reflections from members on what they took away from recent readings.</p>
-
-          <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-8">
-            <blockquote data-aos="fade-up" data-aos-duration="500" class="p-8 bg-white border-l-4 border-purple-500 rounded-2xl shadow-xl">
-              <p class="text-slate-800 text-lg italic">"Reading alongside others made me notice recurring motifs I would never have seen alone."</p>
-              <footer class="mt-4 text-sm text-purple-700 font-bold">— Aisha, 3rd year, English</footer>
-            </blockquote>
-
-            <blockquote data-aos="fade-up" data-aos-duration="550" class="p-8 bg-white border-l-4 border-pink-500 rounded-2xl shadow-xl">
-              <p class="text-slate-800 text-lg italic">"The notes archive is the best study aid — concise, pointed, and authored by peers."</p>
-              <footer class="mt-4 text-sm text-pink-700 font-bold">— Rohit, 2nd year, Economics</footer>
-            </blockquote>
-          </div>
-        </div>
-      </section>
-
-      <!-- SECTION 7: BOOK REVIEWS -->
-      <section id="reviews" data-aos="fade-up" data-aos-duration="700" class="bg-white">
-        <div class="content-max mx-auto px-6 py-20">
-          <h2 class="serif text-4xl font-bold gradient-text">Book Reviews</h2>
-          <p class="mt-3 text-slate-700 max-w-prose text-lg">Short reviews curated by members. Each review is editorial in tone and limited to 120 words.</p>
-
-          <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
-            <article data-aos="flip-left" data-aos-duration="600" class="p-8 border-2 border-purple-300 rounded-3xl bg-gradient-to-br from-purple-50 to-white shadow-xl hover:shadow-2xl transition-all hover:scale-105">
-              <h3 class="font-bold text-xl text-purple-900">On Solitude</h3>
-              <div class="text-xs text-purple-600 mt-1 font-semibold">by Priya • 95 words</div>
-              <p class="mt-4 text-slate-700">A concise reflection that connects the book's argument to everyday campus life and why the club recommended it.</p>
-            </article>
-
-            <article data-aos="flip-left" data-aos-duration="650" class="p-8 border-2 border-pink-300 rounded-3xl bg-gradient-to-br from-pink-50 to-white shadow-xl hover:shadow-2xl transition-all hover:scale-105">
-              <h3 class="font-bold text-xl text-pink-900">Maps and Memory</h3>
-              <div class="text-xs text-pink-600 mt-1 font-semibold">by Sameer • 110 words</div>
-              <p class="mt-4 text-slate-700">Overview of the book's thesis, the reviewer's main objection, and whether they'd recommend it for the next semester.</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <!-- SECTION 8: JOIN THE CLUB -->
-      <section id="join" data-aos="fade-up" data-aos-duration="700" class="warm-gradient relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10">
-          <div class="absolute top-20 left-20 w-72 h-72 bg-white rounded-full blur-3xl"></div>
-          <div class="absolute bottom-20 right-20 w-96 h-96 bg-yellow-300 rounded-full blur-3xl"></div>
-        </div>
+    <!-- Philosophy Corner -->
+    <section class="py-32 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-purple-900/20 to-transparent pointer-events-none"></div>
         
-        <div class="content-max mx-auto px-6 py-20 relative z-10">
-          <h2 class="serif text-4xl font-bold text-white">Apply to Join</h2>
-          <p class="mt-3 text-white/95 max-w-prose text-lg">We prioritize engaged readers. Fill the short form — moderators will review and reply via email.</p>
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <h2 class="text-6xl font-black holo-text mb-8">Philosophy Corner</h2>
+            <p class="text-gray-300 text-xl mb-16">Thought experiments, paradoxes, and questions we debate.</p>
 
-          <form id="joinForm" class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6" onsubmit="handleForm(event)">
-            <input name="name" required class="focus-ring p-4 rounded-xl border-2 border-white/30 bg-white/90 backdrop-blur-sm" placeholder="Full name" />
-            <input name="email" type="email" required class="focus-ring p-4 rounded-xl border-2 border-white/30 bg-white/90 backdrop-blur-sm" placeholder="College email" />
-            <input name="department" class="focus-ring p-4 rounded-xl border-2 border-white/30 bg-white/90 backdrop-blur-sm" placeholder="Department / Year" />
-            <input name="genres" class="focus-ring p-4 rounded-xl border-2 border-white/30 bg-white/90 backdrop-blur-sm" placeholder="Preferred genres (comma separated)" />
-            <textarea name="why" required class="md:col-span-2 focus-ring p-4 rounded-xl border-2 border-white/30 bg-white/90 backdrop-blur-sm" rows="4" placeholder="Why do you want to join? (brief)"></textarea>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <div class="philosophy-card glass-strong rounded-3xl p-10 border-l-8 border-purple-500">
+                    <div class="text-5xl mb-4">🧠</div>
+                    <h3 class="text-3xl font-black mb-4 text-purple-400">Ship of Theseus</h3>
+                    <p class="text-gray-300 leading-relaxed">If you replace every plank of a ship, one by one, is it still the same ship? What defines identity over time?</p>
+                </div>
 
-            <div class="md:col-span-2 flex items-center gap-4">
-              <button type="submit" class="px-8 py-4 rounded-xl bg-white text-purple-700 font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-105">Submit Application</button>
-              <div id="formMsg" class="text-sm text-white font-medium"></div>
+                <div class="philosophy-card glass-strong rounded-3xl p-10 border-l-8 border-pink-500">
+                    <div class="text-5xl mb-4">⚖️</div>
+                    <h3 class="text-3xl font-black mb-4 text-pink-400">Trolley Problem</h3>
+                    <p class="text-gray-300 leading-relaxed">Would you pull a lever to divert a trolley, killing one to save five? Utilitarianism vs. deontological ethics.</p>
+                </div>
+
+                <div class="philosophy-card glass-strong rounded-3xl p-10 border-l-8 border-blue-500">
+                    <div class="text-5xl mb-4">🎭</div>
+                    <h3 class="text-3xl font-black mb-4 text-blue-400">Simulation Hypothesis</h3>
+                    <p class="text-gray-300 leading-relaxed">Are we living in a computer simulation? How would we know? Does it matter for how we live?</p>
+                </div>
+
+                <div class="philosophy-card glass-strong rounded-3xl p-10 border-l-8 border-green-500">
+                    <div class="text-5xl mb-4">🌌</div>
+                    <h3 class="text-3xl font-black mb-4 text-green-400">Existential Absurdity</h3>
+                    <p class="text-gray-300 leading-relaxed">If life has no inherent meaning, should we create our own or embrace the absurd? Camus vs. Sartre.</p>
+                </div>
+
             </div>
-          </form>
         </div>
-      </section>
+    </section>
 
-      <!-- SECTION 9: FOOTER / RESOURCES -->
-      <footer class="bg-gradient-to-r from-slate-900 to-purple-900 text-white">
-        <div class="content-max mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-3 gap-10">
-          <div>
-            <div class="font-bold text-xl gradient-text bg-gradient-to-r from-yellow-300 to-pink-300">Booklings CSN</div>
-            <div class="text-sm text-white/80 mt-3 leading-relaxed">Reading collective at your college. We host weekly sessions, publish notes, and curate reading lists.</div>
-          </div>
+    <!-- 3D Circular Gallery -->
+    <section id="gallery" class="py-32">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-6xl font-black holo-text mb-8 text-center">Session Gallery</h2>
+            <p class="text-gray-300 text-xl mb-16 text-center">Visual memories from recent meetings and events.</p>
 
-          <div>
-            <div class="font-bold text-sm text-yellow-300">Resources</div>
-            <ul class="mt-4 text-sm text-white/80 space-y-2">
-              <li><a href="#archives" class="hover:text-yellow-300 transition-colors">Session archives</a></li>
-              <li><a href="#featured" class="hover:text-yellow-300 transition-colors">Current reads</a></li>
-              <li><a href="#reviews" class="hover:text-yellow-300 transition-colors">Member reviews</a></li>
-            </ul>
-          </div>
+            <div class="carousel-3d-container">
+                <div id="carousel3D" class="carousel-3d"></div>
+            </div>
 
-          <div>
-            <div class="font-bold text-sm text-pink-300">Created By:</div>
-            <ul class="mt-4 text-sm space-y-2">
-              <li class="text-yellow-300 font-bold">Rizwan Syed</li>
-              <li class="text-yellow-300 font-bold">Tareque Syed</li>
-            </ul>
-          </div>
-
-          <div>
-            <div class="font-bold text-sm text-purple-300">Contact</div>
-            <div class="mt-4 text-sm text-white/80">Email: <a href="mailto:booklings.official@gmail.com" class="text-yellow-300 hover:text-yellow-200 transition-colors">booklings.official@gmail.com</a></div>
-            <div class="text-sm text-white/60 mt-4">© Booklings CSN • 2025</div>
-          </div>
+            <div class="flex justify-center gap-6 mt-12">
+                <button id="prevBtn" class="magnetic-btn liquid-button px-8 py-4 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold hover:shadow-lg hover:shadow-purple-500/50 transition-all">
+                    ← Previous
+                </button>
+                <button id="nextBtn" class="magnetic-btn liquid-button px-8 py-4 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold hover:shadow-lg hover:shadow-purple-500/50 transition-all">
+                    Next →
+                </button>
+            </div>
         </div>
-      </footer>
-    </main>
+    </section>
 
-    <!-- SCRIPTS -->
-    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-    <script>
-      // AOS init
-      document.addEventListener('DOMContentLoaded', function () {
-        AOS.init({ once: true });
-      });
+    <!-- ========== ENHANCED DIGITAL BOOKSHELF ========== -->
+    <section class="py-32 bookshelf-section" id="bookshelf">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-6xl font-black holo-text mb-4 text-center">Digital Bookshelf</h2>
+            <p class="text-gray-300 text-xl mb-4 text-center">Foundational texts that shaped our reading list.</p>
+            <p class="text-gray-500 text-sm mb-16 text-center">Hover over books to explore • Click to learn more</p>
 
-      // Mobile menu toggle
-      const mobileBtn = document.getElementById('mobileMenuBtn');
-      const mobileMenu = document.getElementById('mobileMenu');
-      mobileBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+            <div class="bookshelf-container">
+                
+                <!-- Floating Dust Particles -->
+                <div class="dust-particles" id="dustContainer"></div>
 
-      // Simple typewriter that cycles through phrases
-      (function typewriter() {
-        const el = document.getElementById('typewriter');
-        const texts = [
-          'Modern essays & classics',
-          'Close reading of passages',
-          'Interdisciplinary literary debate'
-        ];
-        let idx = 0;
-        let char = 0;
-        let forward = true;
+                <!-- Shelf 1 -->
+                <div class="shelf-unit">
+                    <div class="shelf-row">
+                        <div class="bookend horse"></div>
+                        
+                        <div class="book-3d purple tall has-emblem" data-book="1984">
+                            <div class="book-spine">
+                                <span class="spine-title">1984</span>
+                                <span class="spine-author">Orwell</span>
+                                <div class="book-emblem"></div>
+                            </div>
+                            <div class="book-top"></div>
+                            <div class="book-bottom"></div>
+                            <div class="book-cover"></div>
+                            <div class="book-back"></div>
+                            <div class="book-pages"></div>
+                            <div class="book-info">
+                                <h4>1984</h4>
+                                <div class="author">George Orwell</div>
+                                <p class="description">Dystopian masterpiece exploring totalitarianism, surveillance, and the manipulation of truth.</p>
+                                <span class="genre-tag">Dystopian Fiction</span>
+                            </div>
+                        </div>
 
-        function tick() {
-          const full = texts[idx];
-          if (forward) {
-            char++;
-            el.textContent = full.slice(0, char);
-            if (char === full.length) { forward = false; setTimeout(tick, 1400); return; }
-          } else {
-            char--;
-            el.textContent = full.slice(0, char);
-            if (char === 0) { forward = true; idx = (idx + 1) % texts.length; }
-          }
-          setTimeout(tick, forward ? 70 : 40);
+                        <div class="book-3d pink wide" data-book="sapiens">
+                            <div class="book-spine">
+                                <span class="spine-title">Sapiens</span>
+                                <span class="spine-author">Harari</span>
+                            </div>
+                            <div class="book-top"></div>
+                            <div class="book-bottom"></div>
+                            <div class="book-cover"></div>
+                            <div class="book-back"></div>
+                            <div class="book-pages"></div>
+                            <div class="book-info">
+                                <h4>Sapiens</h4>
+                                <div class="author">Yuval Noah Harari</div>
+                                <p class="description">A brief history of humankind, from cognitive revolution to modern capitalism.</p>
+                                <span class="genre-tag">History / Science</span>
+                            </div>
+                        </div>
+
+                        <div class="book-3d blue short" data-book="meditations">
+                            <div class="book-spine">
+                                <span class="spine-title">Meditations</span>
+                                <span class="spine-author">Aurelius</span>
+                            </div>
+                            <div class="book-top"></div>
+                            <div class="book-bottom"></div>
+                            <div class="book-cover"></div>
+                            <div class="book-back"></div>
+                            <div class="book-pages"></div>
+                            <div class="book-info">
+                                <h4>Meditations</h4>
+                                <div class="author">Marcus Aurelius</div>
+                                <p class="description">Personal writings of the Stoic philosopher emperor on self-discipline and duty.</p>
+                                <span class="genre-tag">Philosophy</span>
+                            </div>
+                        </div>
+
+                        <div class="book-3d green tall" data-book="republic">
+                            <div class="book-spine">
+                                <span class="spine-title">The Republic</span>
+                                <span class="spine-author">Plato</span>
+                            </div>
+                            <div class="book-top"></div>
+                            <div class="book-bottom"></div>
+                            <div class="book-cover"></div>
+                            <div class="book-back"></div>
+                            <div class="book-pages"></div>
+                            <div class="book-info">
+                                <h4>The Republic</h4>
+                                <div class="author">Plato</div>
+                                <p class="description">Foundational work on justice, the ideal state, and the philosopher king.</p>
+                                <span class="genre-tag">Philosophy</span>
+                            </div>
+                        </div>
+
+                        <div class="book-3d red" data-book="zarathustra">
+                            <div class="book-spine">
+                                <span class="spine-title">Zarathustra</span>
+                                <span class="spine-author">Nietzsche</span>
+                            </div>
+                            <div class="book-top"></div>
+                            <div class="book-bottom"></div>
+                            <div class="book-cover"></div>
+                            <div class="book-back"></div>
+                            <div class="book-pages"></div>
+                            <div class="book-info">
+                                <h4>Thus Spoke Zarathustra</h4>
+                                <div class="author">Friedrich Nietzsche</div>
+                                <p class="description">Philosophical novel introducing the Übermensch and eternal recurrence.</p>
+                                <span class="genre-tag">Philosophy</span>
+                            </div>
+                        </div>
+
+                        <div class="book-3d indigo wide has-emblem" data-book="crime">
+                            <div class="book-spine">
+                                <span class="spine-title">Crime & Punishment</span>
+                                <span class="spine-author">Dostoevsky</span>
+                                <div class="book-emblem"></div>
+                            </div>
+                            <div class="book-top"></div>
+                            <div class="book-bottom"></div>
+                            <div class="book-cover"></div>
+                            <div class="book-back"></div>
+                            <div class="book-pages"></div>
+                            <div class="book-info">
+                                <h4>Crime and Punishment</h4>
+                                <div class="author">Fyodor Dostoevsky</div>
+                                <p class="description">Psychological exploration of guilt, redemption, and the human conscience.</p>
+                                <span class="genre-tag">Literary Fiction</span>
+                            </div>
+                        </div>
+
+                        <div class="shelf-plant">🪴</div>
+                    </div>
+                    <div class="shelf-board">
+                        <div class="shelf-glow"></div>
+                    </div>
+                    <div class="shelf-brackets">
+                        <div class="bracket"></div>
+                        <div class="bracket"></div>
+                    </div>
+                </div>
+
+                <!-- Shelf 2 -->
+                <div class="shelf-unit" style="margin-top: 80px;">
+                    <div class="shelf-row">
+                        <div class="shelf-plant">🌿</div>
+
+                        <div class="book-3d teal short" data-book="kafka">
+                            <div class="book-spine">
+                                <span class="spine-title">Metamorphosis</span>
+                                <span class="spine-author">Kafka</span>
+                            </div>
+                            <div class="book-top"></div>
+                            <div class="book-bottom"></div>
+                            <div class="book-cover"></div>
+                            <div class="book-back"></div>
+                            <div class="book-pages"></div>
+                            <div class="book-info">
+                                <h4>The Metamorphosis</h4>
+                                <div class="author">Franz Kafka</div>
+                                <p class="description">Absurdist novella about alienation, identity, and the burden of existence.</p>
+                                <span class="genre-tag">Absurdist Fiction</span>
+                            </div>
+                        </div>
+
+                        <div class="book-3d amber tall" data-book="art-of-war">
+                            <div class="book-spine">
+                                <span class="spine-title">Art of War</span>
+                                <span class="spine-author">Sun Tzu</span>
+                            </div>
+                            <div class="book-top"></div>
+                            <div class="book-bottom"></div>
+                            <div class="book-cover"></div>
+                            <div class="book-back"></div>
+                            <div class="book-pages"></div>
+                            <div class="book-info">
+                                <h4>The Art of War</h4>
+                                <div class="author">Sun Tzu</div>
+                                <p class="description">Ancient Chinese treatise on military strategy and philosophical wisdom.</p>
+                                <span class="genre-tag">Strategy / Philosophy</span>
+                            </div>
+                        </div>
+
+                        <div class="book-3d rose" data-book="wuthering">
+                            <div class="book-spine">
+                                <span class="spine-title">Wuthering Heights</span>
+                                <span class="spine-author">Brontë</span>
+                            </div>
+                            <div class="book-top"></div>
+                            <div class="book-bottom"></div>
+                            <div class="book-cover"></div>
+                            <div class="book-back"></div>
+                            <div class="book-pages"></div>
+                            <div class="book-info">
+                                <h4>Wuthering Heights</h4>
+                                <div class="author">Emily Brontë</div>
+                                <p class="description">Gothic tale of passionate, destructive love on the Yorkshire moors.</p>
+                                <span class="genre-tag">Gothic Romance</span>
+                            </div>
+                        </div>
+
+                        <div class="book-3d purple thin" data-book="stranger">
+                            <div class="book-spine">
+                                <span class="spine-title">Stranger</span>
+                                <span class="spine-author">Camus</span>
+                            </div>
+                            <div class="book-top"></div>
+                            <div class="book-bottom"></div>
+                            <div class="book-cover"></div>
+                            <div class="book-back"></div>
+                            <div class="book-pages"></div>
+                            <div class="book-info">
+                                <h4>The Stranger</h4>
+                                <div class="author">Albert Camus</div>
+                                <p class="description">Existentialist exploration of absurdism through an emotionally detached narrator.</p>
+                                <span class="genre-tag">Existentialism</span>
+                            </div>
+                        </div>
+
+                        <div class="book-3d blue wide" data-book="brave-new">
+                            <div class="book-spine">
+                                <span class="spine-title">Brave New World</span>
+                                <span class="spine-author">Huxley</span>
+                            </div>
+                            <div class="book-top"></div>
+                            <div class="book-bottom"></div>
+                            <div class="book-cover"></div>
+                            <div class="book-back"></div>
+                            <div class="book-pages"></div>
+                            <div class="book-info">
+                                <h4>Brave New World</h4>
+                                <div class="author">Aldous Huxley</div>
+                                <p class="description">Dystopia of pleasure-seeking, genetic engineering, and loss of individuality.</p>
+                                <span class="genre-tag">Dystopian Fiction</span>
+                            </div>
+                        </div>
+
+                        <div class="book-3d green short has-emblem" data-book="walden">
+                            <div class="book-spine">
+                                <span class="spine-title">Walden</span>
+                                <span class="spine-author">Thoreau</span>
+                                <div class="book-emblem"></div>
+                            </div>
+                            <div class="book-top"></div>
+                            <div class="book-bottom"></div>
+                            <div class="book-cover"></div>
+                            <div class="book-back"></div>
+                            <div class="book-pages"></div>
+                            <div class="book-info">
+                                <h4>Walden</h4>
+                                <div class="author">Henry David Thoreau</div>
+                                <p class="description">Reflections on simple living in natural surroundings and self-reliance.</p>
+                                <span class="genre-tag">Transcendentalism</span>
+                            </div>
+                        </div>
+
+                        <div class="book-3d orange tall" data-book="100-years">
+                            <div class="book-spine">
+                                <span class="spine-title">100 Years</span>
+                                <span class="spine-author">Márquez</span>
+                            </div>
+                            <div class="book-top"></div>
+                            <div class="book-bottom"></div>
+                            <div class="book-cover"></div>
+                            <div class="book-back"></div>
+                            <div class="book-pages"></div>
+                            <div class="book-info">
+                                <h4>100 Years of Solitude</h4>
+                                <div class="author">Gabriel García Márquez</div>
+                                <p class="description">Magical realist epic spanning seven generations of the Buendía family.</p>
+                                <span class="genre-tag">Magical Realism</span>
+                            </div>
+                        </div>
+
+                        <div class="bookend globe"></div>
+                    </div>
+                    <div class="shelf-board">
+                        <div class="shelf-glow"></div>
+                    </div>
+                    <div class="shelf-brackets">
+                        <div class="bracket"></div>
+                        <div class="bracket"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section id="reviews" class="py-32">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-6xl font-black holo-text mb-8">Member Reviews</h2>
+            <p class="text-gray-300 text-xl mb-16">Short reviews curated by members. Each review is editorial in tone.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <div class="glass-strong rounded-3xl p-10 hover:scale-105 transition-all duration-500 border-l-4 border-purple-500">
+                    <h3 class="font-black text-3xl text-purple-400 mb-3">On Solitude</h3>
+                    <div class="text-sm text-gray-500 mb-6">by Priya • 95 words</div>
+                    <p class="text-gray-300 leading-relaxed">A concise reflection that connects the book's argument to everyday campus life and why the club recommended it for our monthly discussion.</p>
+                    <div class="mt-6 flex items-center gap-2">
+                        <span class="text-yellow-400">★★★★★</span>
+                        <span class="text-gray-500 text-sm">5/5</span>
+                    </div>
+                </div>
+
+                <div class="glass-strong rounded-3xl p-10 hover:scale-105 transition-all duration-500 border-l-4 border-pink-500">
+                    <h3 class="font-black text-3xl text-pink-400 mb-3">Maps and Memory</h3>
+                    <div class="text-sm text-gray-500 mb-6">by Sameer • 110 words</div>
+                    <p class="text-gray-300 leading-relaxed">Overview of the book's thesis, the reviewer's main objection, and whether they'd recommend it for the next semester's reading list.</p>
+                    <div class="mt-6 flex items-center gap-2">
+                        <span class="text-yellow-400">★★★★☆</span>
+                        <span class="text-gray-500 text-sm">4/5</span>
+                    </div>
+                </div>
+
+                <div class="glass-strong rounded-3xl p-10 hover:scale-105 transition-all duration-500 border-l-4 border-blue-500">
+                    <h3 class="font-black text-3xl text-blue-400 mb-3">Digital Ethics</h3>
+                    <div class="text-sm text-gray-500 mb-6">by Ananya • 128 words</div>
+                    <p class="text-gray-300 leading-relaxed">A provocative take on technology and morality that sparked intense debate in our latest session about privacy and surveillance.</p>
+                    <div class="mt-6 flex items-center gap-2">
+                        <span class="text-yellow-400">★★★★★</span>
+                        <span class="text-gray-500 text-sm">5/5</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Student Testimonials -->
+    <section class="py-32">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-6xl font-black holo-text mb-16 text-center">Student Insights</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <div class="glass-strong rounded-3xl p-12 border-l-8 border-purple-500 hover:scale-105 transition-all duration-500">
+                    <div class="text-6xl mb-6">💡</div>
+                    <p class="text-gray-300 text-2xl italic mb-6 leading-relaxed">"Reading alongside others made me notice recurring motifs I would never have seen alone."</p>
+                    <footer class="text-purple-400 font-bold text-lg">— Aisha, 3rd year, English</footer>
+                </div>
+
+                <div class="glass-strong rounded-3xl p-12 border-l-8 border-pink-500 hover:scale-105 transition-all duration-500">
+                    <div class="text-6xl mb-6">📖</div>
+                    <p class="text-gray-300 text-2xl italic mb-6 leading-relaxed">"The notes archive is the best study aid — concise, pointed, and authored by peers."</p>
+                    <footer class="text-pink-400 font-bold text-lg">— Rohit, 2nd year, Economics</footer>
+                </div>
+
+                <div class="glass-strong rounded-3xl p-12 border-l-8 border-blue-500 hover:scale-105 transition-all duration-500">
+                    <div class="text-6xl mb-6">🎯</div>
+                    <p class="text-gray-300 text-2xl italic mb-6 leading-relaxed">"This club transformed how I read. Every book became a conversation, not just consumption."</p>
+                    <footer class="text-blue-400 font-bold text-lg">— Kavya, 1st year, Philosophy</footer>
+                </div>
+
+                <div class="glass-strong rounded-3xl p-12 border-l-8 border-green-500 hover:scale-105 transition-all duration-500">
+                    <div class="text-6xl mb-6">🚀</div>
+                    <p class="text-gray-300 text-2xl italic mb-6 leading-relaxed">"The debates get intense, but that's where the real learning happens. Unmatched intellectual energy."</p>
+                    <footer class="text-green-400 font-bold text-lg">— Arjun, 4th year, Computer Science</footer>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Join Section with Interactive Form -->
+    <section id="join" class="py-32">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="glass-strong rounded-3xl p-12 lg:p-20 relative overflow-hidden">
+                
+                <!-- Aurora Background -->
+                <div class="absolute inset-0 opacity-20 pointer-events-none">
+                    <div class="absolute top-0 left-0 w-96 h-96 bg-purple-600 blur-3xl rounded-full animate-pulse"></div>
+                    <div class="absolute bottom-0 right-0 w-96 h-96 bg-pink-600 blur-3xl rounded-full animate-pulse" style="animation-delay: 1s;"></div>
+                </div>
+
+                <h2 class="text-6xl font-black holo-text mb-6 relative z-10">Apply to Join</h2>
+                <p class="text-gray-300 text-xl mb-12 relative z-10">We prioritize engaged readers. Fill the short form — moderators will review and reply via email within 48 hours.</p>
+
+                <form id="joinForm" class="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10" onsubmit="handleForm(event)">
+                    <input name="name" required class="glass rounded-2xl p-5 text-white text-lg placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-purple-500 transition-all" placeholder="Full name" />
+                    <input name="email" type="email" required class="glass rounded-2xl p-5 text-white text-lg placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-purple-500 transition-all" placeholder="College email" />
+                    <input name="department" class="glass rounded-2xl p-5 text-white text-lg placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-purple-500 transition-all" placeholder="Department / Year" />
+                    <input name="genres" class="glass rounded-2xl p-5 text-white text-lg placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-purple-500 transition-all" placeholder="Preferred genres" />
+                    <textarea name="why" required class="md:col-span-2 glass rounded-2xl p-5 text-white text-lg placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-purple-500 transition-all" rows="5" placeholder="Why do you want to join? Be specific and thoughtful."></textarea>
+                    <div class="md:col-span-2 flex flex-col sm:flex-row items-center gap-6">
+                        <button type="submit" class="magnetic-btn liquid-button px-12 py-5 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 text-white text-lg font-black hover:shadow-2xl hover:shadow-purple-500/50 transition-all hover:scale-105 relative overflow-hidden w-full sm:w-auto">
+                            Submit Application
+                        </button>
+                        <div id="formMsg" class="text-sm text-gray-400"></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="glass-strong border-t border-white/10 mt-20">
+        <div class="max-w-7xl mx-auto px-6 py-20">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+                
+                <div>
+                    <div class="font-black text-3xl holo-text mb-4">Booklings CSN</div>
+                    <p class="text-gray-400 leading-relaxed">Reading collective hosting weekly sessions, publishing notes, and curating reading lists for passionate students.</p>
+                </div>
+
+                <div>
+                    <div class="font-bold text-purple-400 mb-6 text-lg">Resources</div>
+                    <ul class="space-y-3 text-gray-400">
+                        <li><a href="#gallery" class="hover:text-white transition-colors hover:translate-x-2 inline-block">Session archives</a></li>
+                        <li><a href="#featured" class="hover:text-white transition-colors hover:translate-x-2 inline-block">Current reads</a></li>
+                        <li><a href="#reviews" class="hover:text-white transition-colors hover:translate-x-2 inline-block">Member reviews</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <div class="font-bold text-pink-400 mb-6 text-lg">Created By</div>
+                    <ul class="space-y-3">
+                        <li class="text-purple-400 font-bold text-lg">Rizwan Syed</li>
+                        <li class="text-pink-400 font-bold text-lg">Tareque Syed</li>
+                         <li class="text-purple-400 font-bold text-lg">Want to make yours? Visit sonicinfotech.com</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <div class="font-bold text-blue-400 mb-6 text-lg">Contact</div>
+                    <a href="mailto:booklings.official@gmail.com" class="text-gray-400 hover:text-white transition-colors text-lg block mb-4">booklings.official@gmail.com</a>
+                    <div class="text-gray-500 text-sm mt-8">© Booklings CSN • 2025</div>
+                    <div class="text-gray-600 text-xs mt-2">All rights reserved</div>
+   
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<!-- Modal for Gallery Images -->
+<div id="imageModal" class="fixed inset-0 hidden items-center justify-center modal-backdrop z-[100000]" style="display: none;">
+    <img id="modalImg" class="max-w-[90%] max-h-[90%] rounded-3xl shadow-2xl border-2 border-white/20" />
+</div>
+
+<script>
+    // ===== NEW CURSOR WITH DOT + TRAILING CIRCLE =====
+    const cursorDot = document.getElementById('cursorDot');
+    const cursorCircle = document.getElementById('cursorCircle');
+    
+    // Current positions
+    let mouseX = 0;
+    let mouseY = 0;
+    let circleX = 0;
+    let circleY = 0;
+    
+    // Track mouse position
+    document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        
+        // Dot follows immediately
+        cursorDot.style.left = mouseX + 'px';
+        cursorDot.style.top = mouseY + 'px';
+    });
+    
+    // Animate circle to follow with delay (lerp)
+    function animateCursor() {
+        // Lerp factor (0.15 = smooth trailing, higher = faster follow)
+        const speed = 0.15;
+        
+        // Calculate distance
+        circleX += (mouseX - circleX) * speed;
+        circleY += (mouseY - circleY) * speed;
+        
+        // Apply position
+        cursorCircle.style.left = circleX + 'px';
+        cursorCircle.style.top = circleY + 'px';
+        
+        requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+    
+    // Hover effects
+    const interactiveElements = document.querySelectorAll('a, button, .book-3d, .book-card-3d, .philosophy-card, input, textarea');
+    
+    interactiveElements.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            cursorDot.classList.add('hover');
+            cursorCircle.classList.add('hover');
+        });
+        el.addEventListener('mouseleave', () => {
+            cursorDot.classList.remove('hover');
+            cursorCircle.classList.remove('hover');
+        });
+    });
+    
+    // Click effects
+    document.addEventListener('mousedown', () => {
+        cursorDot.classList.add('clicking');
+        cursorCircle.classList.add('clicking');
+    });
+    
+    document.addEventListener('mouseup', () => {
+        cursorDot.classList.remove('clicking');
+        cursorCircle.classList.remove('clicking');
+    });
+
+    // ===== Three.js 3D Background =====
+    const canvas = document.getElementById('threeCanvas');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.position.z = 5;
+
+    // Create floating books
+    const geometry = new THREE.BoxGeometry(0.3, 0.5, 0.05);
+    const books = [];
+    
+    for (let i = 0; i < 50; i++) {
+        const material = new THREE.MeshPhongMaterial({
+            color: Math.random() * 0xffffff,
+            shininess: 100,
+            transparent: true,
+            opacity: 0.6
+        });
+        const book = new THREE.Mesh(geometry, material);
+        
+        book.position.x = (Math.random() - 0.5) * 20;
+        book.position.y = (Math.random() - 0.5) * 20;
+        book.position.z = (Math.random() - 0.5) * 20;
+        
+        book.rotation.x = Math.random() * Math.PI;
+        book.rotation.y = Math.random() * Math.PI;
+        
+        book.userData = {
+            speedX: (Math.random() - 0.5) * 0.002,
+            speedY: (Math.random() - 0.5) * 0.002,
+            rotationSpeed: (Math.random() - 0.5) * 0.01
+        };
+        
+        scene.add(book);
+        books.push(book);
+    }
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+    
+    const pointLight1 = new THREE.PointLight(0x667eea, 2, 100);
+    pointLight1.position.set(5, 5, 5);
+    scene.add(pointLight1);
+    
+    const pointLight2 = new THREE.PointLight(0xf093fb, 2, 100);
+    pointLight2.position.set(-5, -5, -5);
+    scene.add(pointLight2);
+
+    // Mouse parallax for 3D background
+    let bgMouseX = 0, bgMouseY = 0;
+    document.addEventListener('mousemove', (e) => {
+        bgMouseX = (e.clientX / window.innerWidth) * 2 - 1;
+        bgMouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+    });
+
+    // Animation loop
+    function animate() {
+        requestAnimationFrame(animate);
+        
+        books.forEach(book => {
+            book.position.x += book.userData.speedX;
+            book.position.y += book.userData.speedY;
+            book.rotation.x += book.userData.rotationSpeed;
+            book.rotation.y += book.userData.rotationSpeed;
+            
+            if (book.position.x > 10) book.position.x = -10;
+            if (book.position.x < -10) book.position.x = 10;
+            if (book.position.y > 10) book.position.y = -10;
+            if (book.position.y < -10) book.position.y = 10;
+        });
+        
+        camera.position.x += (bgMouseX * 0.5 - camera.position.x) * 0.05;
+        camera.position.y += (bgMouseY * 0.5 - camera.position.y) * 0.05;
+        camera.lookAt(scene.position);
+        
+        pointLight1.position.x = Math.sin(Date.now() * 0.001) * 5;
+        pointLight1.position.y = Math.cos(Date.now() * 0.001) * 5;
+        pointLight2.position.x = Math.cos(Date.now() * 0.001) * 5;
+        pointLight2.position.y = Math.sin(Date.now() * 0.001) * 5;
+        
+        renderer.render(scene, camera);
+    }
+    animate();
+
+    // Resize handler
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // ===== 3D Carousel =====
+    const carousel = document.getElementById('carousel3D');
+    const images = [
+        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600',
+        'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=600',
+        'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600',
+        'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=600',
+        'https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=600',
+        'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=600',
+        'https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=600'
+    ];
+
+    let currentRotation = 0;
+    const angleStep = 360 / images.length;
+
+    images.forEach((img, i) => {
+        const item = document.createElement('div');
+        item.className = 'carousel-3d-item';
+        item.innerHTML = `<img src="${img}" alt="Gallery Image ${i + 1}" />`;
+        
+        const angle = i * angleStep;
+        item.style.transform = `translate(-50%, -50%) rotateY(${angle}deg) translateZ(500px)`;
+        
+        carousel.appendChild(item);
+        
+        item.querySelector('img').addEventListener('click', () => {
+            document.getElementById('modalImg').src = img;
+            document.getElementById('imageModal').style.display = 'flex';
+        });
+    });
+
+    // Auto-rotate carousel
+    setInterval(() => {
+        currentRotation -= angleStep;
+        carousel.style.transform = `rotateY(${currentRotation}deg)`;
+    }, 3000);
+
+    // Manual controls
+    document.getElementById('prevBtn').addEventListener('click', () => {
+        currentRotation += angleStep;
+        carousel.style.transform = `rotateY(${currentRotation}deg)`;
+    });
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+        currentRotation -= angleStep;
+        carousel.style.transform = `rotateY(${currentRotation}deg)`;
+    });
+
+    // ===== Modal =====
+    const modal = document.getElementById('imageModal');
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.style.display = 'none';
         }
-        tick();
-      })();
+    });
 
-      // Minimal form handler — no backend. Sends mailto fallback and shows local validation message.
-      function handleForm(e) {
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            modal.style.display = 'none';
+        }
+    });
+
+    // ===== Mobile Menu =====
+    document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+        document.getElementById('mobileMenu').classList.toggle('hidden');
+    });
+
+    // ===== Typewriter Effect =====
+    const typewriterEl = document.getElementById('typewriter');
+    const texts = [
+        'Modern essays & classics',
+        'Close reading of passages',
+        'Interdisciplinary literary debate',
+        'Philosophy meets fiction'
+    ];
+    let textIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+
+    function typewriter() {
+        const current = texts[textIndex];
+        
+        if (isDeleting) {
+            typewriterEl.textContent = current.substring(0, charIndex - 1);
+            charIndex--;
+        } else {
+            typewriterEl.textContent = current.substring(0, charIndex + 1);
+            charIndex++;
+        }
+        
+        let speed = isDeleting ? 50 : 100;
+        
+        if (!isDeleting && charIndex === current.length) {
+            speed = 2000;
+            isDeleting = true;
+        } else if (isDeleting && charIndex === 0) {
+            isDeleting = false;
+            textIndex = (textIndex + 1) % texts.length;
+            speed = 500;
+        }
+        
+        setTimeout(typewriter, speed);
+    }
+
+    typewriter();
+
+    // ===== Form Submission =====
+    function handleForm(e) {
         e.preventDefault();
-        const f = e.target;
-        const name = f.name.value.trim();
-        const email = f.email.value.trim();
-        const why = f.why.value.trim();
-
+        const form = e.target;
+        const name = form.name.value.trim();
+        const email = form.email.value.trim();
+        const why = form.why.value.trim();
         const msg = document.getElementById('formMsg');
+
         if (!name || !email || !why) {
-          msg.textContent = 'Please fill required fields.';
-          msg.classList.add('text-yellow-300');
-          return;
+            msg.textContent = '⚠️ Please fill all required fields.';
+            msg.style.color = '#fbbf24';
+            return;
         }
 
-        // mailto fallback to send application to club inbox; moderators can replace address.
-        const subject = encodeURIComponent('Booklings membership application — ' + name);
-        const body = encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\nDepartment: ' + (f.department.value || '') + '\nGenres: ' + (f.genres.value || '') + '\n\nWhy:\n' + why);
+        const subject = encodeURIComponent('Booklings Membership Application — ' + name);
+        const body = encodeURIComponent(
+            'Name: ' + name + '\n' +
+            'Email: ' + email + '\n' +
+            'Department: ' + (form.department.value || 'Not specified') + '\n' +
+            'Genres: ' + (form.genres.value || 'Not specified') + '\n\n' +
+            'Why I want to join:\n' + why
+        );
+
         window.location.href = 'mailto:booklings.official@gmail.com?subject=' + subject + '&body=' + body;
 
-        msg.textContent = 'Opening email client to send your application...';
-        msg.classList.remove('text-yellow-300');
-        msg.classList.add('text-white');
-      }
-    </script>
-<script>
-// READING TEST: SIMPLE FRONTEND RECORDER + RANDOM SCORES
-document.addEventListener("DOMContentLoaded", () => {
-  const recordBtn = document.getElementById("recordBtn");
-  const status = document.getElementById("recordingStatus");
-  const indicator = document.getElementById("listeningIndicator");
-  const results = document.getElementById("results");
-
-  const accuracyBar = document.getElementById("accuracyBar");
-  const confidenceBar = document.getElementById("confidenceBar");
-  const toneBar = document.getElementById("toneBar");
-
-  const accuracyScore = document.getElementById("accuracyScore");
-  const confidenceScore = document.getElementById("confidenceScore");
-  const toneScore = document.getElementById("toneScore");
-  const overallScore = document.getElementById("overallScore");
-  const feedback = document.getElementById("feedback");
-
-  const tryAgainBtn = document.getElementById("tryAgainBtn");
-
-  let isRecording = false;
-  let stream;
-  let mediaRecorder;
-  let chunks = [];
-
-  recordBtn.addEventListener("click", async () => {
-    if (!isRecording) {
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      } catch (err) {
-        alert("Mic access denied or unavailable.");
-        return;
-      }
-
-      isRecording = true;
-      recordBtn.textContent = "Stop Recording";
-      status.textContent = "Listening...";
-      indicator.classList.remove("hidden");
-
-      mediaRecorder = new MediaRecorder(stream);
-      chunks = [];
-
-      mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
-
-      mediaRecorder.onstop = () => {
-        stream.getTracks().forEach(t => t.stop());
-        indicator.classList.add("hidden");
-        status.textContent = "";
-
-        // Fake AI scoring until backend is added
-        const acc = Math.floor(Math.random() * 31) + 70; 
-        const conf = Math.floor(Math.random() * 31) + 60;
-        const tn = Math.floor(Math.random() * 31) + 65;
-        const overall = Math.floor((acc + conf + tn) / 3);
-
-        results.classList.remove("hidden");
-
-        accuracyBar.style.width = acc + "%";
-        confidenceBar.style.width = conf + "%";
-        toneBar.style.width = tn + "%";
-
-        accuracyScore.textContent = acc + "%";
-        confidenceScore.textContent = conf + "%";
-        toneScore.textContent = tn + "%";
-        overallScore.textContent = overall + "%";
-
-        feedback.textContent =
-          overall > 85
-            ? "Excellent reading with strong clarity."
-            : overall > 70
-            ? "Good job! Some polish needed."
-            : "Keep practicing — focus on pacing and clarity.";
-      };
-
-      mediaRecorder.start();
-    } else {
-      isRecording = false;
-      recordBtn.textContent = "Start Recording";
-      status.textContent = "Processing...";
-      mediaRecorder.stop();
+        msg.textContent = '✨ Opening email client...';
+        msg.style.color = '#a78bfa';
     }
-  });
 
-  tryAgainBtn.addEventListener("click", () => {
-    results.classList.add("hidden");
-    accuracyBar.style.width = "0%";
-    confidenceBar.style.width = "0%";
-    toneBar.style.width = "0%";
+    // ===== GSAP ScrollTrigger Animations =====
+    gsap.registerPlugin(ScrollTrigger);
 
-    accuracyScore.textContent = "0%";
-    confidenceScore.textContent = "0%";
-    toneScore.textContent = "0%";
-    overallScore.textContent = "0%";
-    feedback.textContent = "";
-  });
-});
+    gsap.utils.toArray('.book-card-3d').forEach((card, i) => {
+        gsap.from(card, {
+            scrollTrigger: {
+                trigger: card,
+                start: 'top 80%',
+                end: 'top 20%',
+                toggleActions: 'play none none reverse'
+            },
+            opacity: 0,
+            y: 100,
+            rotationX: -30,
+            duration: 1,
+            delay: i * 0.2,
+            ease: 'power3.out'
+        });
+    });
+
+    gsap.utils.toArray('.philosophy-card').forEach((card, i) => {
+        gsap.from(card, {
+            scrollTrigger: {
+                trigger: card,
+                start: 'top 80%',
+                toggleActions: 'play none none reverse'
+            },
+            opacity: 0,
+            scale: 0.8,
+            duration: 0.8,
+            delay: i * 0.1,
+            ease: 'back.out(1.7)'
+        });
+    });
+
+    // Animate bookshelf books on scroll
+    gsap.utils.toArray('.book-3d').forEach((book, i) => {
+        gsap.from(book, {
+            scrollTrigger: {
+                trigger: book,
+                start: 'top 90%',
+                toggleActions: 'play none none reverse'
+            },
+            opacity: 0,
+            y: 50,
+            rotateX: -20,
+            duration: 0.6,
+            delay: i * 0.08,
+            ease: 'back.out(1.7)'
+        });
+    });
+
+    // ===== Magnetic Button Effect =====
+    document.querySelectorAll('.magnetic-btn').forEach(btn => {
+        btn.addEventListener('mousemove', (e) => {
+            const rect = btn.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            
+            btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+        });
+        
+        btn.addEventListener('mouseleave', () => {
+            btn.style.transform = 'translate(0, 0)';
+        });
+    });
+
+    // ===== Smooth Scroll =====
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+
+    // ===== Create Floating Dust Particles =====
+    const dustContainer = document.getElementById('dustContainer');
+    if (dustContainer) {
+        for (let i = 0; i < 20; i++) {
+            const dust = document.createElement('div');
+            dust.className = 'dust';
+            dust.style.left = Math.random() * 100 + '%';
+            dust.style.top = Math.random() * 100 + '%';
+            dust.style.animationDelay = Math.random() * 8 + 's';
+            dust.style.animationDuration = (6 + Math.random() * 4) + 's';
+            dustContainer.appendChild(dust);
+        }
+    }
+
+    // ===== Scroll Progress Bar =====
+    window.addEventListener('scroll', () => {
+        const scrollProgress = document.getElementById('scrollProgress');
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollPercent = scrollTop / docHeight;
+        scrollProgress.style.transform = `scaleX(${scrollPercent})`;
+    });
+
 </script>
-
-
-  </body>
+</body>
 </html>
