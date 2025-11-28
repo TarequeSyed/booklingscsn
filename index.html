@@ -15,21 +15,51 @@
             box-sizing: border-box;
             cursor: none; /* Hide default cursor */
         }
-        
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #0a0a0a;
-            color: white;
-            overflow-x: hidden;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: #0a0a0a;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #000;
     color: white;
     overflow-x: hidden;
-    font-size: 20px; /* Larger base font */
-    zoom: 1.1; /* 10% overall scale increase */
-        }
+    font-size: 20px;
+    zoom: 1.1;
+    
+    /* NEW KILLER BACKGROUND — Cosmic Aurora Library Vibes */
+    background-image: 
+        radial-gradient(circle at 20% 80%, rgba(120, 69, 219, 0.25) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.25) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(168, 85, 247, 0.15) 0%, transparent 60%),
+        linear-gradient(135deg, #0d0a1f 0%, #1a0a2e 50%, #0f0a1f 100%);
+    
+    background-attachment: fixed;
+    animation: aurora-shift 20s ease infinite;
+    
+    /* Subtle animated noise texture — makes it feel alive */
+    position: relative;
+}
 
-        /* ========== THICK & GORGEOUS SCROLLBAR ========== */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/><feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 3 -1"/></filter><rect width="100" height="100" filter="url(%23noise)" opacity="0.15"/></svg>');
+    pointer-events: none;
+    z-index: 0;
+    animation: noise 8s steps(10) infinite;
+}
+
+@keyframes aurora-shift {
+    0%, 100% { 
+        background-position: 0% 50%, 100% 50%, 50% 50%, 0% 0%;
+    }
+    50% { 
+        background-position: 100% 50%, 0% 50%, 50% 50%, 100% 100%;
+    }
+}
+
+@keyframes noise {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(10px, 10px); }
+}
 
 ::-webkit-scrollbar {
     width: 20px;        /* ← This is what you wanted – super thick */
@@ -917,6 +947,39 @@ html {
             .book-3d.tall { --book-height: 195px; }
             .book-3d.short { --book-height: 145px; }
         }
+/* Perfect thin floating bar - 2025 aesthetic */
+nav {
+    height: 58px;
+}
+
+/* Remove any default padding/margin that might be forcing height */
+nav > div {
+    height: 58px;
+}
+
+#mobileMenu {
+    top: 0;
+    right: 0;
+    transform: translateX(100%);
+    pointer-events: none;
+    transition: transform 0.3s ease;
+}
+
+#mobileMenu.open {
+    transform: translateX(0);
+    pointer-events: auto;
+}
+
+#menuBackdrop {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+#menuBackdrop.open {
+    opacity: 1;
+    pointer-events: auto;
+}
     </style>
 </head>
 <body>
@@ -930,33 +993,63 @@ html {
 
 <div class="content-wrapper">
     
-    <!-- Navigation -->
-    <nav class="fixed top-0 left-0 right-0 z-50 glass-strong">
-        <div class="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
-            <div class="font-black text-2xl holo-text">Booklings CSN</div>
-            
-            <!-- Desktop Menu -->
-            <div class="hidden md:flex items-center gap-8">
-                <a href="#featured" class="text-gray-300 hover:text-white transition-colors font-medium">Featured</a>
-                <a href="#gallery" class="text-gray-300 hover:text-white transition-colors font-medium">Gallery</a>
-                <a href="#reviews" class="text-gray-300 hover:text-white transition-colors font-medium">Reviews</a>
-                <a href="#join" class="px-6 py-3 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold hover:shadow-lg hover:shadow-purple-500/50 transition-all">Join Us</a>
-            </div>
-
-            <!-- Mobile Menu Button -->
-            <button id="mobileMenuBtn" class="md:hidden text-white text-2xl">☰</button>
+    <!-- ULTRA SLEEK FLOATING NAVBAR -->
+<nav class="fixed top-6 left-1/2 -translate-x-1/2 z-50">
+    <div class="px-8 py-3 backdrop-blur-2xl bg-white/6 border border-white/15 rounded-full 
+                shadow-2xl shadow-black/40
+                flex items-center gap-10
+                hover:bg-white/10 transition-all duration-400
+                relative overflow-hidden">
+        
+        <!-- Subtle inner glow border -->
+        <div class="absolute inset-0 rounded-full bg-gradient-to-r from-purple-600/20 via-pink-500/20 to-purple-600/20 opacity-60"></div>
+        
+        <!-- Logo -->
+        <div class="font-black text-2xl holo-text tracking-tighter relative z-10">Booklings</div>
+        
+        <!-- Desktop Links -->
+        <div class="hidden lg:flex items-center gap-9 text-gray-200 font-medium relative z-10">
+            <a href="#featured" class="hover:text-white transition-colors duration-300">Featured</a>
+            <a href="#gallery" class="hover:text-white transition-colors duration-300">Gallery</a>
+            <a href="#bookshelf" class="hover:text-white transition-colors duration-300">Bookshelf</a>
+            <a href="#reviews" class="hover:text-white transition-colors duration-300">Reviews</a>
+            <a href="#join" class="px-6 py-2.5 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-bold shadow-lg hover:shadow-purple-500/60 hover:scale-105 transition-all duration-300">
+                Join
+            </a>
         </div>
 
-        <!-- Mobile Menu -->
-        <div id="mobileMenu" class="hidden md:hidden glass-strong border-t border-white/10">
-            <div class="px-6 py-4 space-y-4">
-                <a href="#featured" class="block text-gray-300 hover:text-white transition-colors">Featured</a>
-                <a href="#gallery" class="block text-gray-300 hover:text-white transition-colors">Gallery</a>
-                <a href="#reviews" class="block text-gray-300 hover:text-white transition-colors">Reviews</a>
-                <a href="#join" class="block text-center px-6 py-3 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold">Join Us</a>
-            </div>
-        </div>
-    </nav>
+        <!-- Mobile Menu Button -->
+        <button id="mobileMenuBtn" class="lg:hidden text-white text-2xl hover:scale-110 transition-transform relative z-10">
+            ☰
+        </button>
+
+<!-- MOBILE SLIDE-IN NAV -->
+<div id="mobileMenu" class="fixed top-0 right-0 h-screen w-[70vw] bg-black/70 backdrop-blur-2xl 
+    border-l border-white/20 z-50 translate-x-full transition-all duration-300">
+    
+    <div class="p-8 space-y-6 text-lg">
+        <a href="#featured" class="block text-gray-200 hover:text-white">Featured</a>
+        <a href="#gallery" class="block text-gray-200 hover:text-white">Gallery</a>
+        <a href="#bookshelf" class="block text-gray-200 hover:text-white">Bookshelf</a>
+        <a href="#reviews" class="block text-gray-200 hover:text-white">Reviews</a>
+
+        <a href="#join" class="block mt-8 px-6 py-3 rounded-full bg-gradient-to-r 
+            from-purple-600 to-pink-600 text-white text-center font-bold">
+            Join Us
+        </a>
+    </div>
+</div>
+
+<!-- BACKDROP -->
+<div id="menuBackdrop" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 opacity-0 pointer-events-none 
+    transition-opacity duration-300"></div>
+
+
+    </div>
+
+    <!-- Outer glow ring (thin & elegant) -->
+    <div class="absolute inset-0 -z-10 rounded-full bg-gradient-to-r from-purple-600/40 via-pink-500/40 to-purple-600/40 blur-2xl scale-110 opacity-70"></div>
+</nav>
 
     <!-- Hero Section -->
     <section class="hero-section">
@@ -1589,35 +1682,46 @@ html {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.position.z = 5;
 
-    // Create floating books
-    const geometry = new THREE.BoxGeometry(0.3, 0.5, 0.05);
-    const books = [];
+    // Create floating books — NOW 180 OF THEM (absolute chaos, in the best way)
+const geometry = new THREE.BoxGeometry(0.35, 0.55, 0.06);  // slightly bigger
+const books = [];
+
+for (let i = 0; i < 180; i++) {   // ← 180 books instead of 50
+    const hue = (i * 7) % 360;  // rainbow spread
+    const material = new THREE.MeshPhongMaterial({
+        color: `hsl(${hue}, 70%, 60%)`,
+        shininess: 120,
+        transparent: true,
+        opacity: 0.65,
+        emissive: `hsl(${hue}, 70%, 30%)`,
+        emissiveIntensity: 0.2
+    });
     
-    for (let i = 0; i < 50; i++) {
-        const material = new THREE.MeshPhongMaterial({
-            color: Math.random() * 0xffffff,
-            shininess: 100,
-            transparent: true,
-            opacity: 0.6
-        });
-        const book = new THREE.Mesh(geometry, material);
-        
-        book.position.x = (Math.random() - 0.5) * 20;
-        book.position.y = (Math.random() - 0.5) * 20;
-        book.position.z = (Math.random() - 0.5) * 20;
-        
-        book.rotation.x = Math.random() * Math.PI;
-        book.rotation.y = Math.random() * Math.PI;
-        
-        book.userData = {
-            speedX: (Math.random() - 0.5) * 0.002,
-            speedY: (Math.random() - 0.5) * 0.002,
-            rotationSpeed: (Math.random() - 0.5) * 0.01
-        };
-        
-        scene.add(book);
-        books.push(book);
-    }
+    const book = new THREE.Mesh(geometry, material);
+    
+    // Wider, deeper spread
+    book.position.x = (Math.random() - 0.5) * 35;
+    book.position.y = (Math.random() - 0.5) * 35;
+    book.position.z = (Math.random() - 0.5) * 30;
+    
+    book.rotation.x = Math.random() * Math.PI * 2;
+    book.rotation.y = Math.random() * Math.PI * 2;
+    book.rotation.z = Math.random() * Math.PI * 2;
+    
+    // Individual personality
+    book.userData = {
+        speedX: (Math.random() - 0.5) * 0.004,
+        speedY: (Math.random() - 0.5) * 0.004,
+        speedZ: (Math.random() - 0.5) * 0.002,
+        rotSpeedX: (Math.random() - 0.5) * 0.008,
+        rotSpeedY: (Math.random() - 0.5) * 0.01,
+        rotSpeedZ: (Math.random() - 0.5) * 0.006,
+        floatPhase: Math.random() * Math.PI * 2
+    };
+    
+    scene.add(book);
+    books.push(book);
+}
 
     // Lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -1643,16 +1747,24 @@ html {
         requestAnimationFrame(animate);
         
         books.forEach(book => {
-            book.position.x += book.userData.speedX;
-            book.position.y += book.userData.speedY;
-            book.rotation.x += book.userData.rotationSpeed;
-            book.rotation.y += book.userData.rotationSpeed;
-            
-            if (book.position.x > 10) book.position.x = -10;
-            if (book.position.x < -10) book.position.x = 10;
-            if (book.position.y > 10) book.position.y = -10;
-            if (book.position.y < -10) book.position.y = 10;
-        });
+    // Floating + drifting motion
+    book.position.x += book.userData.speedX;
+    book.position.y += book.userData.speedY + Math.sin(Date.now() * 0.001 + book.userData.floatPhase) * 0.002;
+    book.position.z += book.userData.speedZ;
+    
+    // Gentle tumbling
+    book.rotation.x += book.userData.rotSpeedX;
+    book.rotation.y += book.userData.rotSpeedY;
+    book.rotation.z += book.userData.rotSpeedZ;
+    
+    // Wrap around edges (infinite space feel)
+    if (book.position.x > 20) book.position.x = -20;
+    if (book.position.x < -20) book.position.x = 20;
+    if (book.position.y > 20) book.position.y = -20;
+    if (book.position.y < -20) book.position.y = 20;
+    if (book.position.z > 15) book.position.z = -15;
+    if (book.position.z < -15) book.position.z = 15;
+});
         
         camera.position.x += (bgMouseX * 0.5 - camera.position.x) * 0.05;
         camera.position.y += (bgMouseY * 0.5 - camera.position.y) * 0.05;
@@ -1736,10 +1848,40 @@ html {
         }
     });
 
-    // ===== Mobile Menu =====
-    document.getElementById('mobileMenuBtn').addEventListener('click', () => {
-        document.getElementById('mobileMenu').classList.toggle('hidden');
-    });
+const mobileBtn = document.getElementById('mobileMenuBtn');
+const mobileMenu = document.getElementById('mobileMenu');
+const backdrop = document.getElementById('menuBackdrop');
+let menuOpen = false;
+
+function closeMenu() {
+    menuOpen = false;
+    mobileMenu.classList.remove('open');
+    backdrop.classList.remove('open');
+    document.body.style.overflow = 'auto';
+}
+
+function openMenu() {
+    menuOpen = true;
+    mobileMenu.classList.add('open');
+    backdrop.classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+mobileBtn.addEventListener('click', () => {
+    if (menuOpen) {
+        closeMenu();
+    } else {
+        openMenu();
+    }
+});
+
+backdrop.addEventListener('click', closeMenu);
+
+// Close when clicking menu links
+document.querySelectorAll('#mobileMenu a').forEach(link => {
+    link.addEventListener('click', closeMenu);
+});
+
 
     // ===== Typewriter Effect =====
     const typewriterEl = document.getElementById('typewriter');
