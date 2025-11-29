@@ -1714,12 +1714,17 @@ async function updateSubscriptionStatus(status) {
 }
 
 // ===== INITIALIZE RAZORPAY SUBSCRIPTION =====
+// ===== INITIALIZE RAZORPAY SUBSCRIPTION =====
 async function initializeRazorpaySubscription() {
     const subscribeBtn = document.getElementById('subscribeBtn');
     subscribeBtn.disabled = true;
     subscribeBtn.innerHTML = '<div class="loader loader-sm"></div> Creating subscription...';
 
     try {
+        console.log('Initializing subscription for user:', currentUser.uid);
+        console.log('Using API URL:', API_BASE_URL);
+        console.log('Plan ID:', RAZORPAY_PLAN_ID);
+        
         // Call backend to create subscription
         const response = await fetch(`${API_BASE_URL}/api/create-subscription`, {
             method: 'POST',
@@ -1734,11 +1739,25 @@ async function initializeRazorpaySubscription() {
             })
         });
 
-        const data = await response.json();
+        console.log('Response status:', response.status);
+        
+        // Get response text first to see what we're receiving
+        const responseText = await response.text();
+        console.log('Response text:', responseText);
+        
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (parseError) {
+            console.error('JSON parse error:', parseError);
+            throw new Error('Server returned invalid response: ' + responseText.substring(0, 100));
+        }
 
         if (!data.success) {
             throw new Error(data.error || 'Failed to create subscription');
         }
+
+        console.log('Subscription created:', data.subscriptionId);
 
         // Open Razorpay checkout with subscription
         const options = {
@@ -1746,8 +1765,9 @@ async function initializeRazorpaySubscription() {
             subscription_id: data.subscriptionId,
             name: 'Booklings CSN',
             description: 'Monthly Subscription',
-            image: 'https://your-logo-url.com/logo.png', // Add your logo URL
+            image: 'https://your-logo-url.com/logo.png',
             handler: async function(response) {
+                console.log('Payment response:', response);
                 subscribeBtn.innerHTML = '<div class="loader loader-sm"></div> Verifying payment...';
                 
                 try {
@@ -1765,15 +1785,15 @@ async function initializeRazorpaySubscription() {
                         })
                     });
 
-                    const verifyData = await verifyResponse.json();
+                    const verifyText = await verifyResponse.text();
+                    console.log('Verify response:', verifyText);
+                    
+                    const verifyData = JSON.parse(verifyText);
 
                     if (verifyData.success) {
-                        // Payment successful - hide lock and reload data
                         hidePaymentLock();
                         await loadUserData(currentUser);
                         showToast('Payment successful! Welcome to Booklings CSN 🎉', 'success');
-                        
-                        // Switch to subscription tab
                         document.querySelector('[data-tab="subscription"]').click();
                     } else {
                         throw new Error(verifyData.error || 'Payment verification failed');
@@ -2604,4 +2624,5 @@ function openProfile(uid) {
 </script>
 </body>
 </html>
+
 
