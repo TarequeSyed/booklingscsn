@@ -1303,31 +1303,31 @@ placeholder="Tell us about yourself..."
                 userData = userDoc.data();
                 userCoins = userData.coins || 0;
             } else {
-                userData = {
-                    name: displayName,
-                    email: user.email,
-                    coins: 100,
-                    totalEarned: 100,
-                    totalSpent: 0,
-                    streak: 0,
-                    bio: '',
-                    genre: '',
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    lastActive: firebase.firestore.FieldValue.serverTimestamp()
-                };
-                
-                await db.collection('users').doc(user.uid).set(userData);
-                userCoins = 100;
-                
-                await db.collection('users').doc(user.uid).collection('transactions').add({
-                    type: 'earned',
-                    amount: 100,
-                    reason: 'Welcome bonus',
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                
-                showToast('Welcome bonus: +100 coins!', 'success');
-            }
+    userData = {
+        name: displayName,
+        email: user.email,
+        coins: 20,
+        totalEarned: 20,
+        totalSpent: 0,
+        streak: 0,
+        bio: '',
+        genre: '',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        lastActive: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    
+    await db.collection('users').doc(user.uid).set(userData);
+    userCoins = 20;
+    
+    await db.collection('users').doc(user.uid).collection('transactions').add({
+        type: 'earned',
+        amount: 20,
+        reason: 'Welcome bonus',
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    
+    showToast('Welcome bonus: +20 coins!', 'success');
+}
 
             await db.collection('users').doc(user.uid).update({
                 lastActive: firebase.firestore.FieldValue.serverTimestamp()
