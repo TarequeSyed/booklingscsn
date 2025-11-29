@@ -17,33 +17,33 @@ const razorpay = new Razorpay({
     key_secret: process.env.RAZORPAY_KEY_SECRET
 });
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
     // Enable CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
+    
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
     }
-
+    
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
-
+    
     try {
         const { userId, userEmail, userName, planId } = req.body;
-
+        
         if (!userId || !userEmail) {
             return res.status(400).json({ error: 'Missing required fields' });
         }
-
+        
         // Verify user exists in Firebase
         const userDoc = await db.collection('users').doc(userId).get();
         if (!userDoc.exists) {
             return res.status(404).json({ error: 'User not found' });
         }
-
+        
         // Create Razorpay subscription
         const subscription = await razorpay.subscriptions.create({
             plan_id: planId,
@@ -57,7 +57,7 @@ module.exports = async (req, res) => {
                 userName: userName
             }
         });
-
+        
         // Update Firestore with pending subscription
         await db.collection('users').doc(userId).update({
             'subscription.status': 'pending',
@@ -65,13 +65,13 @@ module.exports = async (req, res) => {
             'subscription.planId': planId,
             'subscription.createdAt': admin.firestore.FieldValue.serverTimestamp()
         });
-
+        
         return res.status(200).json({
             success: true,
             subscriptionId: subscription.id,
             shortUrl: subscription.short_url
         });
-
+        
     } catch (error) {
         console.error('Subscription creation error:', error);
         return res.status(500).json({ 
@@ -79,4 +79,4 @@ module.exports = async (req, res) => {
             details: error.description || 'Internal server error'
         });
     }
-};
+}
