@@ -1530,24 +1530,31 @@ placeholder="Tell us about yourself..."
                 `;
             } else {
                 leaderboardContainer.innerHTML = users.map((user, index) => `
-                    <div class="leaderboard-item flex items-center gap-4 p-4 rounded-xl border-l-4 ${index < 3 ? `rank-${index + 1}` : 'border-white/10'} ${user.id === currentUser.uid ? 'bg-purple-500/20' : ''}">
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center font-bold text-sm flex-shrink-0">
-                            ${index + 1}
-                        </div>
-                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center font-bold flex-shrink-0">
-                            ${getInitials(user.name)}
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="font-bold truncate ${user.id === currentUser.uid ? 'text-purple-400' : ''}">
-                                ${user.name} ${user.id === currentUser.uid ? '(You)' : ''}
-                            </p>
-                        </div>
-                        <div class="text-yellow-400 font-bold flex items-center gap-1 flex-shrink-0">
-                            <svg class="icon-sm"><use href="#icon-coin"/></svg>
-                            ${user.coins.toLocaleString()}
-                        </div>
-                    </div>
-                `).join('');
+    <div 
+        class="leaderboard-item flex items-center gap-4 p-4 rounded-xl border-l-4 
+        ${index < 3 ? `rank-${index + 1}` : 'border-white/10'} 
+        ${user.id === currentUser.uid ? 'bg-purple-500/20' : ''} 
+        cursor-pointer"
+        onclick="openProfile('${user.id}')"
+    >
+        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center font-bold text-sm flex-shrink-0">
+            ${index + 1}
+        </div>
+        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center font-bold flex-shrink-0">
+            ${getInitials(user.name)}
+        </div>
+        <div class="flex-1 min-w-0">
+            <p class="font-bold truncate ${user.id === currentUser.uid ? 'text-purple-400' : ''}">
+                ${user.name} ${user.id === currentUser.uid ? '(You)' : ''}
+            </p>
+        </div>
+        <div class="text-yellow-400 font-bold flex items-center gap-1 flex-shrink-0">
+            <svg class="icon-sm"><use href="#icon-coin"/></svg>
+            ${user.coins.toLocaleString()}
+        </div>
+    </div>
+`).join('');
+
             }
 
             // Your rank display
@@ -1930,6 +1937,11 @@ function initAnimations() {
         delay: 0.4
     });
 }
+
+function openProfile(uid) {
+    window.location.href = `profile.html?uid=${uid}`;
+}
+
 </script>
 </body>
 </html>
