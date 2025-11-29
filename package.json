@@ -1,0 +1,17 @@
+{
+  "name": "booklings-csn",
+  "version": "1.0.0",
+  "description": "Booklings CSN Dashboard with Razorpay Subscription",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "razorpay": "^2.9.2",
+    "firebase-admin": "^12.0.0"
+  },
+  "engines": {
+    "node": ">=18.x"
+  }
+}
