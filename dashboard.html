@@ -1878,57 +1878,6 @@ async function cancelSubscription() {
     }
 }
 
-// ===== HANDLE PAYMENT SUCCESS =====
-async function handlePaymentSuccess(response) {
-    try {
-        // Calculate next billing date (1st of next month)
-        const now = new Date();
-        const nextBillingDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-        
-        // Update user subscription in Firestore
-        await db.collection('users').doc(currentUser.uid).update({
-            subscription: {
-                status: 'active',
-                subscriptionId: response.razorpay_payment_id,
-                currentPeriodEnd: firebase.firestore.Timestamp.fromDate(nextBillingDate),
-                lastPaymentId: response.razorpay_payment_id,
-                lastPaymentDate: firebase.firestore.FieldValue.serverTimestamp()
-            }
-        });
-
-        // Add payment record
-        await db.collection('users').doc(currentUser.uid).collection('payments').add({
-            amount: SUBSCRIPTION_AMOUNT / 100,
-            currency: 'INR',
-            paymentId: response.razorpay_payment_id,
-            status: 'success',
-            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-            nextBillingDate: firebase.firestore.Timestamp.fromDate(nextBillingDate)
-        });
-
-        // Update local state
-        subscriptionData = {
-            status: 'active',
-            subscriptionId: response.razorpay_payment_id,
-            currentPeriodEnd: firebase.firestore.Timestamp.fromDate(nextBillingDate)
-        };
-
-        // Hide payment lock
-        hidePaymentLock();
-        
-        // Reload user data
-        await loadUserData(currentUser);
-        
-        showToast('Payment successful! Welcome to Booklings CSN 🎉', 'success');
-        
-        // Switch to subscription tab to show details
-        document.querySelector('[data-tab="subscription"]').click();
-        
-    } catch (error) {
-        console.error('Error processing payment:', error);
-        showToast('Payment verification failed. Please contact support.', 'error');
-    }
-}
 
 // ===== LOAD PAYMENT HISTORY =====
 async function loadPaymentHistory() {
@@ -2624,5 +2573,6 @@ function openProfile(uid) {
 </script>
 </body>
 </html>
+
 
 
