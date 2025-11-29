@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile — Booklings CSN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+
+    <style>
+        body {
+            font-family: Inter, sans-serif;
+            background: #000;
+            color: white;
+
+            background-image:
+                radial-gradient(circle at 20% 80%, rgba(120,69,219,.25) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(236,72,153,.25) 0%, transparent 50%),
+                linear-gradient(135deg, #0d0a1f, #1a0a2e);
+            background-attachment: fixed;
+        }
+        .glass {
+            background: rgba(255,255,255,.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,.15);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen p-6 flex items-center justify-center">
+
+<div class="max-w-2xl w-full glass rounded-3xl p-8">
+    
+    <a href="dashboard.html" class="text-gray-400 text-sm mb-6 inline-block hover:text-white">
+        ← Back to Dashboard
+    </a>
+
+    <div id="loading" class="text-center py-20">
+        <div class="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin mx-auto"></div>
+        <p class="mt-4 text-gray-400">Loading profile...</p>
+    </div>
+
+    <div id="profileContent" class="hidden">
+        <!-- Avatar -->
+        <div class="flex justify-center mb-6">
+            <div id="avatar" class="w-28 h-28 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center text-4xl font-black"></div>
+        </div>
+
+        <!-- Name and Email -->
+        <h1 id="name" class="text-4xl font-black text-center mb-1">Name</h1>
+        <p id="email" class="text-gray-400 text-center mb-6">email</p>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-3 gap-4 mb-8">
+            <div class="glass rounded-xl p-4 text-center">
+                <p class="text-xl font-black text-yellow-400" id="coins">0</p>
+                <p class="text-gray-400 text-sm">Coins</p>
+            </div>
+            <div class="glass rounded-xl p-4 text-center">
+                <p class="text-xl font-black text-purple-400" id="rank">#--</p>
+                <p class="text-gray-400 text-sm">Rank</p>
+            </div>
+            <div class="glass rounded-xl p-4 text-center">
+                <p class="text-xl font-black text-pink-400" id="redemptions">0</p>
+                <p class="text-gray-400 text-sm">Redemptions</p>
+            </div>
+        </div>
+
+        <!-- Bio -->
+        <div class="glass rounded-2xl p-6 mb-6">
+            <h3 class="font-black text-xl mb-2">Bio</h3>
+            <p id="bio" class="text-gray-400">Loading...</p>
+        </div>
+
+        <!-- Genre -->
+        <div class="glass rounded-2xl p-6 mb-6">
+            <h3 class="font-black text-xl mb-2">Favorite Genre</h3>
+            <p id="genre" class="text-gray-400">Loading...</p>
+        </div>
+
+        <!-- Member Since -->
+        <div class="glass rounded-2xl p-6">
+            <h3 class="font-black text-xl mb-2">Member Since</h3>
+            <p id="since" class="text-gray-400">Loading...</p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // Firebase Config
+    const firebaseConfig = {
+        apiKey: "AIzaSyCgGeZDIvUVCjkzbDrd5BK9It6yhDielVY",
+        authDomain: "booklings-csn.firebaseapp.com",
+        projectId: "booklings-csn",
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    // IMPORTANT: you forgot this
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // Get UID from URL
+    const uid = new URLSearchParams(window.location.search).get('uid');
+
+    if (!uid) {
+        document.body.innerHTML = "<h1 class='text-center text-red-400 text-2xl'>Invalid Profile</h1>";
+    }
+
+    function getInitials(name) {
+        return name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0,2);
+    }
+
+    async function loadProfile() {
+        try {
+            const doc = await db.collection("users").doc(uid).get();
+
+            if (!doc.exists) {
+                document.body.innerHTML =
+                    "<h1 class='text-center text-red-400 text-2xl'>User Not Found</h1>";
+                return;
+            }
+
+            const data = doc.data();
+
+            document.getElementById("loading").classList.add("hidden");
+            document.getElementById("profileContent").classList.remove("hidden");
+
+            document.getElementById("avatar").textContent = getInitials(data.name);
+            document.getElementById("name").textContent = data.name;
+            document.getElementById("email").textContent = data.email || "No email";
+            document.getElementById("coins").textContent = data.coins || 0;
+            document.getElementById("bio").textContent = data.bio || "No bio yet";
+            document.getElementById("genre").textContent = data.genre || "No genre";
+            document.getElementById("since").textContent =
+                data.createdAt?.toDate().toDateString() || "Unknown";
+
+            // Calculate dynamic rank
+const rankSnap = await db.collection("users")
+    .orderBy("coins", "desc")
+    .get();
+
+let position = 1;
+for (const doc of rankSnap.docs) {
+    if (doc.id === uid) break;
+    position++;
+}
+
+document.getElementById("rank").textContent = "#" + position;
+
+
+            // redemptions count
+            const redemptions = await db
+                .collection("users")
+                .doc(uid)
+                .collection("redemptions")
+                .get();
+
+            document.getElementById("redemptions").textContent = redemptions.size;
+
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    // Auth guard
+    auth.onAuthStateChanged((user) => {
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
+        loadProfile();
+    });
+</script>
+
+
+</body>
+</html>
