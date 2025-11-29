@@ -1422,11 +1422,18 @@
         updateRedeemCards();
         
         // Show content with animation
-        loadingOverlay.classList.add('fade-out');
-        mainContent.classList.add('show');
-        initAnimations();
-        // REMOVED: setupCursorHovers();
-        setupEventListeners();
+loadingOverlay.classList.add('fade-out');
+mainContent.classList.add('show');
+
+// WAIT for DOM to be fully visible before updating
+setTimeout(() => {
+    updateAllDisplays();
+    forceUpdateCoins();
+    console.log('Final coin update after DOM visible:', userCoins);
+}, 100);
+
+initAnimations();
+setupEventListeners();
         
     } catch (error) {
         console.error('Error loading data:', error);
@@ -1451,12 +1458,11 @@
             }
         }, 5000);
 
-        // ===== PREVENT BACK BUTTON ISSUES =====
-        window.addEventListener('pageshow', (event) => {
-            if (event.persisted) {
-                window.location.reload();
-            }
-        });
+    window.addEventListener('pageshow', (event) => {
+    if (event.persisted) {
+        window.location.reload();
+    }
+});
 
         // ===== LOAD USER DATA =====
     async function loadUserData(user) {
@@ -1468,6 +1474,7 @@
             if (userDoc.exists) {
                 userData = userDoc.data();
                 userCoins = userData.coins || 0;
+                console.log('User coins loaded:', userCoins, 'from userData:', userData.coins);
                 subscriptionData = userData.subscription || null;
             } else {
                 // New user - set trial period
@@ -1511,9 +1518,10 @@
                 lastActive: firebase.firestore.FieldValue.serverTimestamp()
             });
 
-            // Check subscription status
-            checkSubscriptionStatus();
-            updateAllDisplays();
+         forceBetaFreeAccess();
+checkSubscriptionStatus();
+
+forceUpdateCoins(); // Add this line
             
         } catch (error) {
             console.error('Error loading user data:', error);
@@ -1522,40 +1530,57 @@
         }
     }
 
-    // 🔥 Ultimate Free-Access Patch
-    subscriptionData = { status: 'active' };
-    hidePaymentLock();
-    document.getElementById('subscriptionStatus').textContent = 'Active';
-    document.getElementById('subscriptionDetails').textContent = 'You have full access (beta mode)';
+
 
 
     function checkSubscriptionStatus() {
         hidePaymentLock();
     }
 
+function forceBetaFreeAccess() {
+    if (!subscriptionData) subscriptionData = {};
+    subscriptionData.status = 'active';
+    
+    const statusEl = document.getElementById('subscriptionStatus');
+    const detailsEl = document.getElementById('subscriptionDetails');
+    
+    if (statusEl) statusEl.textContent = 'Active';
+    if (detailsEl) detailsEl.textContent = 'You have full access (beta mode)';
+    
+    console.log('Beta access forced. UserCoins:', userCoins);
+}
 
-    // ===== SHOW PAYMENT LOCK =====
+
     function showPaymentLock(message) {
-        const paymentLock = document.getElementById('paymentLock');
-        const paymentMessage = document.getElementById('paymentMessage');
-        const expiredBadge = document.getElementById('expiredBadge');
-        const trialBadge = document.getElementById('trialBadge');
-        
-        paymentMessage.textContent = message;
-        expiredBadge.style.display = 'flex';
-        trialBadge.style.display = 'none';
-        paymentLock.classList.add('active');
-        
-        // Lock main content
-        document.querySelector('.main-layout').classList.add('locked-overlay');
-    }
+    const paymentLock = document.getElementById('paymentLock');
+    if (!paymentLock) return; // Exit if element doesn't exist
+    
+    const paymentMessage = document.getElementById('paymentMessage');
+    const expiredBadge = document.getElementById('expiredBadge');
+    const trialBadge = document.getElementById('trialBadge');
+    
+    if (paymentMessage) paymentMessage.textContent = message;
+    if (expiredBadge) expiredBadge.style.display = 'flex';
+    if (trialBadge) trialBadge.style.display = 'none';
+    
+    paymentLock.classList.add('active');
+    
+    const mainLayout = document.querySelector('.main-layout');
+    if (mainLayout) mainLayout.classList.add('locked-overlay');
+}
 
     // ===== HIDE PAYMENT LOCK =====
     function hidePaymentLock() {
-        const paymentLock = document.getElementById('paymentLock');
+    const paymentLock = document.getElementById('paymentLock');
+    if (paymentLock) {
         paymentLock.classList.remove('active');
-        document.querySelector('.main-layout').classList.remove('locked-overlay');
     }
+    
+    const mainLayout = document.querySelector('.main-layout');
+    if (mainLayout) {
+        mainLayout.classList.remove('locked-overlay');
+    }
+}
 
     // ===== UPDATE TRIAL BADGE =====
     function updateTrialBadge(daysLeft) {
@@ -1901,6 +1926,20 @@
                 document.getElementById('profileLastActive').textContent = formatRelativeTime(lastActive);
             }
         }
+
+        function forceUpdateCoins() {
+    const coinElements = ['coinBalance', 'sidebarCoins', 'mobileCoins', 'redeemBalance', 'yourCoins', 'profileCoins'];
+    
+    coinElements.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.textContent = userCoins.toLocaleString();
+            console.log(`Updated ${id} to:`, userCoins);
+        } else {
+            console.warn(`Element ${id} not found`);
+        }
+    });
+}
 
         // ===== LOAD TRANSACTIONS =====
         async function loadTransactions() {
@@ -2445,5 +2484,7 @@
     }
 
     </script>
+
+    
     </body>
     </html>
