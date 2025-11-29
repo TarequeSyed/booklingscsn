@@ -11,6 +11,9 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <!-- Add this after Firebase scripts -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     
     <style>
         * {
@@ -481,6 +484,111 @@
                 width: 100%;
             }
         }
+
+        /* Payment Lock Overlay */
+.payment-lock {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(20px);
+    z-index: 99999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.payment-lock.active {
+    display: flex;
+}
+
+.payment-lock-content {
+    max-width: 600px;
+    width: 100%;
+}
+
+.trial-badge {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.expired-badge {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.pricing-card {
+    background: linear-gradient(135deg, rgba(167, 139, 250, 0.2), rgba(236, 72, 153, 0.2));
+    border: 2px solid rgba(167, 139, 250, 0.5);
+    border-radius: 24px;
+    padding: 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.pricing-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+.price-tag {
+    font-size: 64px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 20px 0;
+}
+
+.features-list {
+    text-align: left;
+    margin: 30px 0;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    margin-bottom: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+}
+
+.locked-overlay {
+    filter: blur(5px);
+    pointer-events: none;
+    user-select: none;
+}
     </style>
 </head>
 <body>
@@ -716,8 +824,70 @@ placeholder="Tell us about yourself..."
 <!-- Custom Cursor -->
 <div class="cursor-dot" id="cursorDot"></div>
 <div class="cursor-circle" id="cursorCircle"></div>
+
+<!-- Payment Lock Overlay -->
+<div class="payment-lock" id="paymentLock">
+    <div class="payment-lock-content">
+        <div class="pricing-card glass-strong">
+            <div id="trialBadge" class="trial-badge" style="display: none;">
+                <svg class="icon-sm"><use href="#icon-clock"/></svg>
+                <span id="trialDaysLeft">14 days trial remaining</span>
+            </div>
+            
+            <div id="expiredBadge" class="expired-badge" style="display: none;">
+                <svg class="icon-sm"><use href="#icon-x"/></svg>
+                <span>Subscription Expired</span>
+            </div>
+
+            <h1 class="text-4xl font-black mb-4">
+                <span class="holo-text">Unlock Full Access</span>
+            </h1>
+            <p class="text-gray-300 text-lg mb-4" id="paymentMessage">
+                Subscribe to access all features and attend sessions
+            </p>
+
+            <div class="price-tag">₹49.99</div>
+            <p class="text-gray-400 mb-6">per month • Auto-renews monthly</p>
+
+            <div class="features-list">
+                <div class="feature-item">
+                    <svg class="icon-sm text-green-400"><use href="#icon-check"/></svg>
+                    <span>Attend all weekly reading sessions</span>
+                </div>
+                <div class="feature-item">
+                    <svg class="icon-sm text-green-400"><use href="#icon-check"/></svg>
+                    <span>Earn coins for activities</span>
+                </div>
+                <div class="feature-item">
+                    <svg class="icon-sm text-green-400"><use href="#icon-check"/></svg>
+                    <span>Redeem exclusive rewards</span>
+                </div>
+                <div class="feature-item">
+                    <svg class="icon-sm text-green-400"><use href="#icon-check"/></svg>
+                    <span>Access to leaderboard & competitions</span>
+                </div>
+                <div class="feature-item">
+                    <svg class="icon-sm text-green-400"><use href="#icon-check"/></svg>
+                    <span>Priority support</span>
+                </div>
+            </div>
+
+            <button id="subscribeBtn" class="w-full py-4 rounded-xl bg-gradient-to-r from-yellow-500 to-orange-500 font-black text-lg hover:scale-105 transition-all flex items-center justify-center gap-3 mb-4">
+                <svg class="icon"><use href="#icon-card"/></svg>
+                Subscribe Now
+            </button>
+
+            <p class="text-gray-500 text-xs">
+                Secure payment via Razorpay • Cancel anytime<br>
+                Auto-renews on 1st of each month
+            </p>
+        </div>
+    </div>
+</div>
+
 <!-- Main Layout - FIXED STRUCTURE -->
 <div class="main-content main-layout" id="mainContent">
+
 <!-- Sidebar - FIXED -->
 <aside class="sidebar hidden lg:flex flex-col glass-strong border-r border-white/10 p-6">
     
@@ -745,6 +915,10 @@ placeholder="Tell us about yourself..."
             <svg class="icon text-blue-400"><use href="#icon-user"/></svg>
             <span class="font-medium">Profile</span>
         </button>
+        <button data-tab="subscription" class="sidebar-link w-full flex items-center gap-4 px-4 py-3 rounded-xl border-l-4 border-transparent text-left text-gray-400">
+    <svg class="icon text-green-400"><use href="#icon-card"/></svg>
+    <span class="font-medium">Subscription</span>
+</button>
     </nav>
 
     <!-- User Info -->
@@ -808,6 +982,10 @@ placeholder="Tell us about yourself..."
             <svg class="icon-sm"><use href="#icon-user"/></svg>
             Profile
         </button>
+        <button data-tab="subscription" class="tab-btn px-5 py-3 rounded-full glass font-bold text-sm whitespace-nowrap flex items-center gap-2">
+    <svg class="icon-sm"><use href="#icon-card"/></svg>
+    Subscription
+</button>
     </div>
 
     <!-- ==================== COINS SECTION ==================== -->
@@ -1193,6 +1371,54 @@ placeholder="Tell us about yourself..."
 </div>
 </div>
 </div>
+<!-- ==================== SUBSCRIPTION SECTION ==================== -->
+<div id="subscriptionSection" class="tab-content">
+    <div class="mb-8">
+        <h1 class="text-4xl lg:text-5xl font-black mb-2">
+            <span class="holo-text">Subscription</span>
+        </h1>
+        <p class="text-gray-400 text-lg">Manage your monthly subscription</p>
+    </div>
+
+    <!-- Current Status Card -->
+    <div class="glass-strong rounded-3xl p-8 mb-8 relative overflow-hidden">
+        <div class="absolute -top-20 -right-20 w-60 h-60 bg-green-500/20 blur-3xl rounded-full"></div>
+        
+        <div class="relative z-10">
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
+                <div class="flex items-center gap-6">
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
+                        <svg class="icon-xl text-white" id="statusIcon"><use href="#icon-check"/></svg>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-black mb-1" id="subscriptionStatus">Active</h2>
+                        <p class="text-gray-400" id="subscriptionDetails">Your subscription is active</p>
+                        <p class="text-sm text-gray-500 mt-1" id="nextBillingDate">Next billing: Loading...</p>
+                    </div>
+                </div>
+                <button id="manageSubscriptionBtn" class="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 font-bold hover:scale-105 transition-all flex items-center gap-2">
+                    <svg class="icon-sm"><use href="#icon-settings"/></svg>
+                    Manage
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subscription History -->
+    <div class="glass-strong rounded-3xl p-8">
+        <h2 class="text-2xl font-black mb-6 flex items-center gap-3">
+            <svg class="icon text-blue-400"><use href="#icon-history"/></svg>
+            Payment History
+        </h2>
+        <div id="paymentHistory" class="space-y-3">
+            <div class="empty-state">
+                <svg class="icon-xl text-gray-600 mx-auto mb-3"><use href="#icon-card"/></svg>
+                <p>No payment history yet</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 </main>
 </div>
 <script>
@@ -1211,16 +1437,22 @@ placeholder="Tell us about yourself..."
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    // ===== REWARDS DATA =====
-    const REWARDS = [
-        { id: 'bookmark', name: 'Custom Bookmark', description: 'Exclusive Booklings branded bookmark', cost: 100, icon: 'bookmark', gradient: 'from-purple-600 to-pink-600' },
-        { id: 'ebook', name: 'Free E-Book', description: 'Choose any e-book from our library', cost: 250, icon: 'book', gradient: 'from-blue-600 to-cyan-600' },
-        { id: 'merch', name: 'Booklings T-Shirt', description: 'Exclusive club merchandise', cost: 500, icon: 'shirt', gradient: 'from-green-600 to-teal-600' },
-        { id: 'book', name: 'Physical Book', description: 'Free book from our reading list', cost: 750, icon: 'book', gradient: 'from-orange-600 to-red-600' },
-        { id: 'vip', name: 'VIP Session Access', description: 'Exclusive author meet and greet', cost: 1000, icon: 'star', gradient: 'from-yellow-500 to-orange-500' },
-        { id: 'gift-card', name: '500 Rupee Gift Card', description: 'Amazon/Flipkart gift voucher', cost: 2000, icon: 'card', gradient: 'from-pink-600 to-purple-600' }
-    ];
+// ===== CONFIGURATION =====
+const RAZORPAY_KEY = 'rzp_live_RSFyBRpbGTr2uo'; // Replace with your actual key
+const SUBSCRIPTION_AMOUNT = 4999; // ₹49.99 in paise
+const TRIAL_PERIOD_DAYS = 14; // Easily editable for testing
+const API_BASE_URL = 'https://booklings-csn.vercel.app'; // Replace after deploying to Vercel
+const RAZORPAY_PLAN_ID = 'plan_XXXXXXXXXX'; // Get this after running create-plan API
 
+// ===== REWARDS DATA =====
+const REWARDS = [
+    { id: 'bookmark', name: 'Custom Bookmark', description: 'Exclusive Booklings branded bookmark', cost: 100, icon: 'bookmark', gradient: 'from-purple-600 to-pink-600' },
+    { id: 'ebook', name: 'Free E-Book', description: 'Choose any e-book from our library', cost: 250, icon: 'book', gradient: 'from-blue-600 to-cyan-600' },
+    { id: 'merch', name: 'Booklings T-Shirt', description: 'Exclusive club merchandise', cost: 500, icon: 'shirt', gradient: 'from-green-600 to-teal-600' },
+    { id: 'book', name: 'Physical Book', description: 'Free book from our reading list', cost: 750, icon: 'book', gradient: 'from-orange-600 to-red-600' },
+    { id: 'vip', name: 'VIP Session Access', description: 'Exclusive author meet and greet', cost: 1000, icon: 'star', gradient: 'from-yellow-500 to-orange-500' },
+    { id: 'gift-card', name: '500 Rupee Gift Card', description: 'Amazon/Flipkart gift voucher', cost: 2000, icon: 'card', gradient: 'from-pink-600 to-purple-600' }
+];
     // ===== STATE FLAGS =====
     let isRedirecting = false;
     let authCheckComplete = false;
@@ -1228,6 +1460,9 @@ placeholder="Tell us about yourself..."
     let userData = null;
     let userCoins = 0;
     let selectedReward = null;
+    let subscriptionData = null;
+let isTrialActive = false;
+let trialEndsAt = null;
 
     // ===== DOM ELEMENTS =====
     const loadingOverlay = document.getElementById('loadingOverlay');
@@ -1251,7 +1486,9 @@ placeholder="Tell us about yourself..."
             await loadUserData(user);
             await loadTransactions();
             await loadRedemptions();
+            await loadPaymentHistory();
             await loadLeaderboard();
+            await checkAutoRenewal();
             renderRewards();
             updateRedeemCards();
             
@@ -1293,54 +1530,454 @@ placeholder="Tell us about yourself..."
     });
 
     // ===== LOAD USER DATA =====
-    async function loadUserData(user) {
-        const displayName = user.displayName || 'Reader';
+async function loadUserData(user) {
+    const displayName = user.displayName || 'Reader';
 
-        try {
-            const userDoc = await db.collection('users').doc(user.uid).get();
+    try {
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        
+        if (userDoc.exists) {
+            userData = userDoc.data();
+            userCoins = userData.coins || 0;
+            subscriptionData = userData.subscription || null;
+        } else {
+            // New user - set trial period
+            const now = new Date();
+            const trialEnd = new Date(now.getTime() + (TRIAL_PERIOD_DAYS * 24 * 60 * 60 * 1000));
             
-            if (userDoc.exists) {
-                userData = userDoc.data();
-                userCoins = userData.coins || 0;
-            } else {
-    userData = {
-        name: displayName,
-        email: user.email,
-        coins: 20,
-        totalEarned: 20,
-        totalSpent: 0,
-        streak: 0,
-        bio: '',
-        genre: '',
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        lastActive: firebase.firestore.FieldValue.serverTimestamp()
-    };
-    
-    await db.collection('users').doc(user.uid).set(userData);
-    userCoins = 20;
-    
-    await db.collection('users').doc(user.uid).collection('transactions').add({
-        type: 'earned',
-        amount: 20,
-        reason: 'Welcome bonus',
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    
-    showToast('Welcome bonus: +20 coins!', 'success');
+            userData = {
+                name: displayName,
+                email: user.email,
+                coins: 20,
+                totalEarned: 20,
+                totalSpent: 0,
+                streak: 0,
+                bio: '',
+                genre: '',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+                subscription: {
+                    status: 'trial',
+                    trialEndsAt: firebase.firestore.Timestamp.fromDate(trialEnd),
+                    subscriptionId: null,
+                    currentPeriodEnd: firebase.firestore.Timestamp.fromDate(trialEnd)
+                }
+            };
+            
+            await db.collection('users').doc(user.uid).set(userData);
+            userCoins = 20;
+            subscriptionData = userData.subscription;
+            
+            await db.collection('users').doc(user.uid).collection('transactions').add({
+                type: 'earned',
+                amount: 20,
+                reason: 'Welcome bonus',
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            showToast(`Welcome! You have ${TRIAL_PERIOD_DAYS} days trial access.`, 'success');
+        }
+
+        await db.collection('users').doc(user.uid).update({
+            lastActive: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // Check subscription status
+        checkSubscriptionStatus();
+        updateAllDisplays();
+        
+    } catch (error) {
+        console.error('Error loading user data:', error);
+        userCoins = 0;
+        updateAllDisplays();
+    }
 }
 
-            await db.collection('users').doc(user.uid).update({
-                lastActive: firebase.firestore.FieldValue.serverTimestamp()
-            });
-
-            updateAllDisplays();
-            
-        } catch (error) {
-            console.error('Error loading user data:', error);
-            userCoins = 0;
-            updateAllDisplays();
-        }
+// ===== CHECK SUBSCRIPTION STATUS =====
+function checkSubscriptionStatus() {
+    if (!subscriptionData) {
+        showPaymentLock('No active subscription');
+        return;
     }
+
+    const now = new Date();
+    const periodEnd = subscriptionData.currentPeriodEnd?.toDate ? 
+        subscriptionData.currentPeriodEnd.toDate() : 
+        new Date(subscriptionData.currentPeriodEnd);
+
+    if (subscriptionData.status === 'trial') {
+        if (now > periodEnd) {
+            // Trial expired
+            showPaymentLock('Your trial period has ended');
+            updateSubscriptionStatus('expired');
+        } else {
+            // Trial active
+            isTrialActive = true;
+            trialEndsAt = periodEnd;
+            const daysLeft = Math.ceil((periodEnd - now) / (1000 * 60 * 60 * 24));
+            updateTrialBadge(daysLeft);
+        }
+    } else if (subscriptionData.status === 'active') {
+        // Subscription active
+        hidePaymentLock();
+        updateSubscriptionDisplay();
+    } else {
+        // Expired or cancelled
+        showPaymentLock('Your subscription has expired');
+    }
+}
+
+// ===== SHOW PAYMENT LOCK =====
+function showPaymentLock(message) {
+    const paymentLock = document.getElementById('paymentLock');
+    const paymentMessage = document.getElementById('paymentMessage');
+    const expiredBadge = document.getElementById('expiredBadge');
+    const trialBadge = document.getElementById('trialBadge');
+    
+    paymentMessage.textContent = message;
+    expiredBadge.style.display = 'flex';
+    trialBadge.style.display = 'none';
+    paymentLock.classList.add('active');
+    
+    // Lock main content
+    document.querySelector('.main-layout').classList.add('locked-overlay');
+}
+
+// ===== HIDE PAYMENT LOCK =====
+function hidePaymentLock() {
+    const paymentLock = document.getElementById('paymentLock');
+    paymentLock.classList.remove('active');
+    document.querySelector('.main-layout').classList.remove('locked-overlay');
+}
+
+// ===== UPDATE TRIAL BADGE =====
+function updateTrialBadge(daysLeft) {
+    const trialBadge = document.getElementById('trialBadge');
+    const trialDaysLeft = document.getElementById('trialDaysLeft');
+    
+    trialDaysLeft.textContent = `${daysLeft} days trial remaining`;
+    trialBadge.style.display = 'flex';
+    
+    // Show subtle reminder in payment lock (but don't lock content)
+    const paymentLock = document.getElementById('paymentLock');
+    const paymentMessage = document.getElementById('paymentMessage');
+    paymentMessage.textContent = 'Subscribe now to continue after trial ends';
+}
+
+// ===== UPDATE SUBSCRIPTION DISPLAY =====
+function updateSubscriptionDisplay() {
+    const statusEl = document.getElementById('subscriptionStatus');
+    const detailsEl = document.getElementById('subscriptionDetails');
+    const nextBillingEl = document.getElementById('nextBillingDate');
+    const statusIcon = document.getElementById('statusIcon');
+    
+    if (subscriptionData.status === 'trial') {
+        const periodEnd = subscriptionData.currentPeriodEnd?.toDate ? 
+            subscriptionData.currentPeriodEnd.toDate() : 
+            new Date(subscriptionData.currentPeriodEnd);
+        const daysLeft = Math.ceil((periodEnd - new Date()) / (1000 * 60 * 60 * 24));
+        
+        statusEl.textContent = 'Trial Period';
+        statusEl.className = 'text-2xl font-black mb-1 text-green-400';
+        detailsEl.textContent = `${daysLeft} days remaining`;
+        nextBillingEl.textContent = `Trial ends: ${formatDate(periodEnd)}`;
+        statusIcon.innerHTML = '<use href="#icon-clock"/>';
+    } else if (subscriptionData.status === 'active') {
+        const periodEnd = subscriptionData.currentPeriodEnd?.toDate ? 
+            subscriptionData.currentPeriodEnd.toDate() : 
+            new Date(subscriptionData.currentPeriodEnd);
+        
+        statusEl.textContent = 'Active';
+        statusEl.className = 'text-2xl font-black mb-1 text-green-400';
+        detailsEl.textContent = 'Your subscription is active';
+        nextBillingEl.textContent = `Next billing: ${formatDate(periodEnd)}`;
+        statusIcon.innerHTML = '<use href="#icon-check"/>';
+    } else {
+        statusEl.textContent = 'Expired';
+        statusEl.className = 'text-2xl font-black mb-1 text-red-400';
+        detailsEl.textContent = 'Renew to continue access';
+        nextBillingEl.textContent = 'No active subscription';
+        statusIcon.innerHTML = '<use href="#icon-x"/>';
+    }
+}
+
+// ===== UPDATE SUBSCRIPTION STATUS IN DB =====
+async function updateSubscriptionStatus(status) {
+    try {
+        await db.collection('users').doc(currentUser.uid).update({
+            'subscription.status': status
+        });
+        subscriptionData.status = status;
+    } catch (error) {
+        console.error('Error updating subscription status:', error);
+    }
+}
+
+// ===== INITIALIZE RAZORPAY SUBSCRIPTION =====
+async function initializeRazorpaySubscription() {
+    const subscribeBtn = document.getElementById('subscribeBtn');
+    subscribeBtn.disabled = true;
+    subscribeBtn.innerHTML = '<div class="loader loader-sm"></div> Creating subscription...';
+
+    try {
+        // Call backend to create subscription
+        const response = await fetch(`${API_BASE_URL}/api/create-subscription`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userId: currentUser.uid,
+                userEmail: currentUser.email,
+                userName: userData?.name || currentUser.displayName || 'Reader',
+                planId: RAZORPAY_PLAN_ID
+            })
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+            throw new Error(data.error || 'Failed to create subscription');
+        }
+
+        // Open Razorpay checkout with subscription
+        const options = {
+            key: RAZORPAY_KEY,
+            subscription_id: data.subscriptionId,
+            name: 'Booklings CSN',
+            description: 'Monthly Subscription',
+            image: 'https://your-logo-url.com/logo.png', // Add your logo URL
+            handler: async function(response) {
+                subscribeBtn.innerHTML = '<div class="loader loader-sm"></div> Verifying payment...';
+                
+                try {
+                    // Verify payment on backend
+                    const verifyResponse = await fetch(`${API_BASE_URL}/api/verify-payment`, {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            paymentId: response.razorpay_payment_id,
+                            subscriptionId: response.razorpay_subscription_id,
+                            signature: response.razorpay_signature,
+                            userId: currentUser.uid
+                        })
+                    });
+
+                    const verifyData = await verifyResponse.json();
+
+                    if (verifyData.success) {
+                        // Payment successful - hide lock and reload data
+                        hidePaymentLock();
+                        await loadUserData(currentUser);
+                        showToast('Payment successful! Welcome to Booklings CSN 🎉', 'success');
+                        
+                        // Switch to subscription tab
+                        document.querySelector('[data-tab="subscription"]').click();
+                    } else {
+                        throw new Error(verifyData.error || 'Payment verification failed');
+                    }
+                } catch (verifyError) {
+                    console.error('Verification error:', verifyError);
+                    showToast('Payment verification failed. Please contact support.', 'error');
+                }
+                
+                subscribeBtn.disabled = false;
+                subscribeBtn.innerHTML = `
+                    <svg class="icon"><use href="#icon-card"/></svg>
+                    Subscribe Now
+                `;
+            },
+            prefill: {
+                name: userData?.name || currentUser?.displayName || '',
+                email: currentUser?.email || '',
+            },
+            theme: {
+                color: '#a78bfa'
+            },
+            modal: {
+                ondismiss: function() {
+                    subscribeBtn.disabled = false;
+                    subscribeBtn.innerHTML = `
+                        <svg class="icon"><use href="#icon-card"/></svg>
+                        Subscribe Now
+                    `;
+                }
+            }
+        };
+
+        const razorpay = new Razorpay(options);
+        razorpay.open();
+        
+    } catch (error) {
+        console.error('Payment initialization error:', error);
+        showToast(error.message || 'Failed to initialize payment', 'error');
+        subscribeBtn.disabled = false;
+        subscribeBtn.innerHTML = `
+            <svg class="icon"><use href="#icon-card"/></svg>
+            Subscribe Now
+        `;
+    }
+}
+
+// ===== CANCEL SUBSCRIPTION =====
+async function cancelSubscription() {
+    if (!subscriptionData?.subscriptionId) {
+        showToast('No active subscription found', 'error');
+        return;
+    }
+
+    const confirmed = confirm('Are you sure you want to cancel your subscription? You will lose access at the end of the current billing period.');
+    
+    if (!confirmed) return;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/cancel-subscription`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userId: currentUser.uid,
+                subscriptionId: subscriptionData.subscriptionId
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            await loadUserData(currentUser);
+            showToast('Subscription cancelled successfully', 'success');
+        } else {
+            throw new Error(data.error || 'Cancellation failed');
+        }
+    } catch (error) {
+        console.error('Cancellation error:', error);
+        showToast(error.message || 'Failed to cancel subscription', 'error');
+    }
+}
+
+// ===== HANDLE PAYMENT SUCCESS =====
+async function handlePaymentSuccess(response) {
+    try {
+        // Calculate next billing date (1st of next month)
+        const now = new Date();
+        const nextBillingDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+        
+        // Update user subscription in Firestore
+        await db.collection('users').doc(currentUser.uid).update({
+            subscription: {
+                status: 'active',
+                subscriptionId: response.razorpay_payment_id,
+                currentPeriodEnd: firebase.firestore.Timestamp.fromDate(nextBillingDate),
+                lastPaymentId: response.razorpay_payment_id,
+                lastPaymentDate: firebase.firestore.FieldValue.serverTimestamp()
+            }
+        });
+
+        // Add payment record
+        await db.collection('users').doc(currentUser.uid).collection('payments').add({
+            amount: SUBSCRIPTION_AMOUNT / 100,
+            currency: 'INR',
+            paymentId: response.razorpay_payment_id,
+            status: 'success',
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            nextBillingDate: firebase.firestore.Timestamp.fromDate(nextBillingDate)
+        });
+
+        // Update local state
+        subscriptionData = {
+            status: 'active',
+            subscriptionId: response.razorpay_payment_id,
+            currentPeriodEnd: firebase.firestore.Timestamp.fromDate(nextBillingDate)
+        };
+
+        // Hide payment lock
+        hidePaymentLock();
+        
+        // Reload user data
+        await loadUserData(currentUser);
+        
+        showToast('Payment successful! Welcome to Booklings CSN 🎉', 'success');
+        
+        // Switch to subscription tab to show details
+        document.querySelector('[data-tab="subscription"]').click();
+        
+    } catch (error) {
+        console.error('Error processing payment:', error);
+        showToast('Payment verification failed. Please contact support.', 'error');
+    }
+}
+
+// ===== LOAD PAYMENT HISTORY =====
+async function loadPaymentHistory() {
+    try {
+        const snapshot = await db.collection('users').doc(currentUser.uid)
+            .collection('payments')
+            .orderBy('timestamp', 'desc')
+            .limit(10)
+            .get();
+
+        const container = document.getElementById('paymentHistory');
+        
+        if (snapshot.empty) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <svg class="icon-xl text-gray-600 mx-auto mb-3"><use href="#icon-card"/></svg>
+                    <p>No payment history yet</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = snapshot.docs.map(doc => {
+            const data = doc.data();
+            const timestamp = data.timestamp?.toDate ? data.timestamp.toDate() : new Date();
+            const statusBadge = data.status === 'success' ? 
+                '<span class="badge badge-success">Success</span>' : 
+                '<span class="badge badge-failed">Failed</span>';
+            
+            return `
+                <div class="transaction-item flex items-center gap-4 p-4 glass rounded-xl border-l-4 border-green-500">
+                    <div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                        <svg class="icon-sm text-green-400"><use href="#icon-card"/></svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-bold">Monthly Subscription</p>
+                        <p class="text-gray-500 text-sm">${formatDate(timestamp)}</p>
+                        <p class="text-gray-600 text-xs font-mono mt-1">${data.paymentId}</p>
+                    </div>
+                    <div class="text-right flex-shrink-0">
+                        <p class="font-black text-green-400">₹${data.amount}</p>
+                        ${statusBadge}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    } catch (error) {
+        console.error('Error loading payment history:', error);
+    }
+}
+
+// ===== CHECK FOR AUTO RENEWAL =====
+async function checkAutoRenewal() {
+    if (!subscriptionData || subscriptionData.status !== 'active') return;
+    
+    const now = new Date();
+    const periodEnd = subscriptionData.currentPeriodEnd?.toDate ? 
+        subscriptionData.currentPeriodEnd.toDate() : 
+        new Date(subscriptionData.currentPeriodEnd);
+    
+    // Check if subscription expired
+    if (now > periodEnd) {
+        // In production, this would trigger Razorpay webhook
+        // For now, mark as expired and show payment lock
+        await updateSubscriptionStatus('expired');
+        showPaymentLock('Your subscription has expired. Renew to continue.');
+        showToast('Subscription expired. Please renew.', 'error');
+    }
+}
 
     // ===== UPDATE ALL DISPLAYS =====
     function updateAllDisplays() {
@@ -1698,6 +2335,7 @@ placeholder="Tell us about yourself..."
                 await loadTransactions();
                 await loadRedemptions();
                 
+                
                 redeemModal.classList.remove('show');
                 showToast(`Successfully redeemed ${selectedReward.name}!`, 'success');
                 selectedReward = null;
@@ -1829,6 +2467,27 @@ placeholder="Tell us about yourself..."
                 document.getElementById(`${tab}Section`).classList.add('active');
             });
         });
+
+        // Subscribe button
+        const subscribeBtn = document.getElementById('subscribeBtn');
+        subscribeBtn.addEventListener('click', initializeRazorpaySubscription);
+
+        // Manage subscription button
+const manageSubscriptionBtn = document.getElementById('manageSubscriptionBtn');
+manageSubscriptionBtn.addEventListener('click', () => {
+    if (subscriptionData?.status === 'trial') {
+        initializeRazorpaySubscription();
+    } else if (subscriptionData?.status === 'active') {
+        // Show options for active subscription
+        const action = confirm('Subscription is active.\n\nClick OK to CANCEL subscription\nClick CANCEL to keep subscription');
+        if (action) {
+            cancelSubscription();
+        }
+    } else {
+        initializeRazorpaySubscription();
+    }
+});
+
 
         // ESC closes modals
         document.addEventListener('keydown', (e) => {
