@@ -8,6 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">    
     <style>
         * {
             margin: 0;
@@ -21,7 +22,7 @@
     color: white;
     overflow-x: hidden;
     font-size: 20px;
-    zoom: 1.1;
+    
     
     /* NEW KILLER BACKGROUND — Cosmic Aurora Library Vibes */
     background-image: 
@@ -949,7 +950,10 @@ html {
         }
 /* Perfect thin floating bar - 2025 aesthetic */
 nav {
-    height: 58px;
+    position: fixed;
+    top: 1.5rem; /* Change this to: top: 0; for mobile */
+    left: 50%;
+    transform: translateX(-50%); /* This is causing the width issue */
 }
 
 /* Remove any default padding/margin that might be forcing height */
@@ -958,11 +962,10 @@ nav > div {
 }
 
 #mobileMenu {
-    top: 0;
+    width: 70vw;
+    max-width: 70vw; /* Add this */
     right: 0;
-    transform: translateX(100%);
-    pointer-events: none;
-    transition: transform 0.3s ease;
+    left: auto; /* Add this to ensure it stays on right */
 }
 
 #mobileMenu.open {
@@ -980,6 +983,143 @@ nav > div {
     opacity: 1;
     pointer-events: auto;
 }
+
+@media (max-width: 768px) {
+    nav .hover\:scale-105 {
+        transform: none !important;
+    }
+}
+
+
+/* ===== MOBILE NAVBAR FIX (Rizwan Edition) ===== */
+@media (max-width: 768px) {
+    
+    nav {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 60px !important;
+
+        transform: none !important;
+        border-radius: 0 !important;
+
+        background: rgba(255,255,255,0.06) !important;
+        backdrop-filter: blur(20px) !important;
+        border-bottom: 1px solid rgba(255,255,255,0.15) !important;
+
+        padding: 0 16px !important;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        z-index: 9999 !important;
+    }
+
+    /* The container div inside nav */
+    nav > div {
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    /* Kill desktop links entirely */
+    nav .lg\\:flex {
+        display: none !important;
+    }
+
+    /* Outer glow — GONE */
+    nav > .absolute {
+        display: none !important;
+    }
+
+    /* Resize text */
+    nav a.font-black {
+        font-size: 1.5rem !important;
+    }
+
+    /* Hamburger button spacing fixed */
+    #mobileMenuBtn {
+        font-size: 1.9rem !important;
+        margin-right: 4px;
+    }
+}
+
+@media (max-width: 768px) {
+    nav {
+        /* Add these: */
+        left: 0 !important;
+        right: 0 !important;
+        margin: 0 !important;
+        max-width: 100vw !important;
+        box-sizing: border-box !important;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        overflow-x: hidden;
+    }
+}
+
+#mobileMenu {
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    will-change: transform; /* Add this for better performance */
+}
+
+#mobileMenu.open {
+    transform: translateX(0);
+}
+
+html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
+@media (max-width: 768px) {
+    nav {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 60px !important;
+        transform: none !important;
+        border-radius: 0 !important; /* This should already be there */
+        background: rgba(255,255,255,0.06) !important;
+        backdrop-filter: blur(20px) !important;
+        border-bottom: 1px solid rgba(255,255,255,0.15) !important;
+        padding: 0 16px !important;
+        z-index: 9999 !important;
+    }
+
+    /* Force the inner div to also be flat */
+    nav > div {
+        border-radius: 0 !important; /* Add/ensure this is there */
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+    }
+
+    /* Remove the glow ring on mobile */
+    nav > .absolute {
+        display: none !important;
+    }
+}
+
+#mobileMenu > div {
+    line-height: 3; /* More spacious */
+}
+
+
     </style>
 </head>
 <body>
@@ -993,9 +1133,8 @@ nav > div {
 
 <div class="content-wrapper">
     
-    <!-- ULTRA SLEEK FLOATING NAVBAR -->
-<!-- ULTRA SLEEK FLOATING NAVBAR -->
-<nav class="fixed top-6 left-1/2 -translate-x-1/2 z-50">
+<nav class="fixed top-6 left-1/2 -translate-x-1/2 z-50 transform-gpu will-change-transform">
+
     <div class="px-8 py-3 backdrop-blur-2xl bg-white/6 border border-white/15 rounded-full 
                 shadow-2xl shadow-black/40
                 flex items-center gap-10
@@ -1037,7 +1176,7 @@ nav > div {
 <div id="mobileMenu" class="fixed top-0 right-0 h-screen w-[70vw] bg-black/70 backdrop-blur-2xl 
     border-l border-white/20 z-50 translate-x-full transition-all duration-300">
     
-    <div class="p-8 space-y-6 text-lg">
+    <div class="pt-20 px-8 pb-8 space-y-6 text-lg">
         <a href="#featured" class="block text-gray-200 hover:text-white">Featured</a>
         <a href="#gallery" class="block text-gray-200 hover:text-white">Gallery</a>
         <a href="#bookshelf" class="block text-gray-200 hover:text-white">Bookshelf</a>
@@ -1090,7 +1229,7 @@ nav > div {
                 
                 <div class="book-card-3d glass-strong rounded-3xl p-8 hover:shadow-2xl hover:shadow-purple-500/30 transition-all">
                     <div class="w-full h-80 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl mb-6 flex items-center justify-center text-6xl font-black text-white shadow-2xl">
-                        📖
+                        <i class="fas fa-book-open text-12xl"></i>
                     </div>
                     <h3 class="text-3xl font-black mb-3 text-purple-400">The Stranger</h3>
                     <p class="text-gray-400 mb-2 text-sm">Albert Camus</p>
@@ -1100,7 +1239,7 @@ nav > div {
 
                 <div class="book-card-3d glass-strong rounded-3xl p-8 hover:shadow-2xl hover:shadow-pink-500/30 transition-all">
                     <div class="w-full h-80 bg-gradient-to-br from-pink-600 to-red-600 rounded-2xl mb-6 flex items-center justify-center text-6xl font-black text-white shadow-2xl">
-                        🔥
+                       <i class="fas fa-fire text-6xl"></i>
                     </div>
                     <h3 class="text-3xl font-black mb-3 text-pink-400">Beloved</h3>
                     <p class="text-gray-400 mb-2 text-sm">Toni Morrison</p>
@@ -1110,7 +1249,7 @@ nav > div {
 
                 <div class="book-card-3d glass-strong rounded-3xl p-8 hover:shadow-2xl hover:shadow-blue-500/30 transition-all">
                     <div class="w-full h-80 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl mb-6 flex items-center justify-center text-6xl font-black text-white shadow-2xl">
-                        💭
+                        <i class="fas fa-comment-dots text-6xl"></i>
                     </div>
                     <h3 class="text-3xl font-black mb-3 text-blue-400">Essays</h3>
                     <p class="text-gray-400 mb-2 text-sm">Michel de Montaigne</p>
@@ -1133,25 +1272,25 @@ nav > div {
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 
                 <div class="philosophy-card glass-strong rounded-3xl p-10 border-l-8 border-purple-500">
-                    <div class="text-5xl mb-4">🧠</div>
+                    <div class="text-5xl mb-4"><i class="fas fa-brain text-6xl"></i></div>
                     <h3 class="text-3xl font-black mb-4 text-purple-400">Ship of Theseus</h3>
                     <p class="text-gray-300 leading-relaxed">If you replace every plank of a ship, one by one, is it still the same ship? What defines identity over time?</p>
                 </div>
 
                 <div class="philosophy-card glass-strong rounded-3xl p-10 border-l-8 border-pink-500">
-                    <div class="text-5xl mb-4">⚖️</div>
+                    <div class="text-5xl mb-4"><i class="fas fa-balance-scale text-6xl"></i></div>
                     <h3 class="text-3xl font-black mb-4 text-pink-400">Trolley Problem</h3>
                     <p class="text-gray-300 leading-relaxed">Would you pull a lever to divert a trolley, killing one to save five? Utilitarianism vs. deontological ethics.</p>
                 </div>
 
                 <div class="philosophy-card glass-strong rounded-3xl p-10 border-l-8 border-blue-500">
-                    <div class="text-5xl mb-4">🎭</div>
+                    <div class="text-5xl mb-4"><i class="fas fa-theater-masks text-6xl"></i></div>
                     <h3 class="text-3xl font-black mb-4 text-blue-400">Simulation Hypothesis</h3>
                     <p class="text-gray-300 leading-relaxed">Are we living in a computer simulation? How would we know? Does it matter for how we live?</p>
                 </div>
 
                 <div class="philosophy-card glass-strong rounded-3xl p-10 border-l-8 border-green-500">
-                    <div class="text-5xl mb-4">🌌</div>
+                    <div class="text-5xl mb-4"><i class="fas fa-globe text-6xl"></i></div>
                     <h3 class="text-3xl font-black mb-4 text-green-400">Existential Absurdity</h3>
                     <p class="text-gray-300 leading-relaxed">If life has no inherent meaning, should we create our own or embrace the absurd? Camus vs. Sartre.</p>
                 </div>
@@ -1516,25 +1655,25 @@ nav > div {
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 
                 <div class="glass-strong rounded-3xl p-12 border-l-8 border-purple-500 hover:scale-105 transition-all duration-500">
-                    <div class="text-6xl mb-6">💡</div>
+                    <div class="text-6xl mb-6"><i class="fas fa-lightbulb text-6xl"></i></div>
                     <p class="text-gray-300 text-2xl italic mb-6 leading-relaxed">"Reading alongside others made me notice recurring motifs I would never have seen alone."</p>
                     <footer class="text-purple-400 font-bold text-lg">— Aisha, 3rd year, English</footer>
                 </div>
 
                 <div class="glass-strong rounded-3xl p-12 border-l-8 border-pink-500 hover:scale-105 transition-all duration-500">
-                    <div class="text-6xl mb-6">📖</div>
+                    <div class="text-6xl mb-6"><i class="fas fa-book text-6xl"></i></div>
                     <p class="text-gray-300 text-2xl italic mb-6 leading-relaxed">"The notes archive is the best study aid — concise, pointed, and authored by peers."</p>
                     <footer class="text-pink-400 font-bold text-lg">— Rohit, 2nd year, Economics</footer>
                 </div>
 
                 <div class="glass-strong rounded-3xl p-12 border-l-8 border-blue-500 hover:scale-105 transition-all duration-500">
-                    <div class="text-6xl mb-6">🎯</div>
+                    <div class="text-6xl mb-6"><i class="fas fa-bullseye"></i></div>
                     <p class="text-gray-300 text-2xl italic mb-6 leading-relaxed">"This club transformed how I read. Every book became a conversation, not just consumption."</p>
                     <footer class="text-blue-400 font-bold text-lg">— Kavya, 1st year, Philosophy</footer>
                 </div>
 
                 <div class="glass-strong rounded-3xl p-12 border-l-8 border-green-500 hover:scale-105 transition-all duration-500">
-                    <div class="text-6xl mb-6">🚀</div>
+                    <div class="text-6xl mb-6"><i class="fas fa-rocket"></i></div>
                     <p class="text-gray-300 text-2xl italic mb-6 leading-relaxed">"The debates get intense, but that's where the real learning happens. Unmatched intellectual energy."</p>
                     <footer class="text-green-400 font-bold text-lg">— Arjun, 4th year, Computer Science</footer>
                 </div>
@@ -1862,20 +2001,24 @@ const mobileMenu = document.getElementById('mobileMenu');
 const backdrop = document.getElementById('menuBackdrop');
 let menuOpen = false;
 
-function closeMenu() {
-    menuOpen = false;
-    mobileMenu.classList.remove('open');
-    backdrop.classList.remove('open');
-    document.body.style.overflow = 'auto';
-}
-
+// In your openMenu() function, add:
 function openMenu() {
     menuOpen = true;
     mobileMenu.classList.add('open');
     backdrop.classList.add('open');
     document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed'; /* Add this */
+    document.body.style.width = '100%'; /* Add this */
 }
 
+function closeMenu() {
+    menuOpen = false;
+    mobileMenu.classList.remove('open');
+    backdrop.classList.remove('open');
+    document.body.style.overflow = 'auto';
+    document.body.style.position = ''; /* Add this */
+    document.body.style.width = ''; /* Add this */
+}
 mobileBtn.addEventListener('click', () => {
     if (menuOpen) {
         closeMenu();
