@@ -20,7 +20,7 @@ function verifyWebhookSignature(body, signature, secret) {
     return expectedSignature === signature;
 }
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
@@ -173,4 +173,4 @@ module.exports = async (req, res) => {
             event: event
         });
     }
-};
+}
